@@ -108,11 +108,11 @@ export function buildModelInfo({
 
   const tooltipParts: string[] = [];
   if (provider) {
-    tooltipParts.push(`Provider: ${provider}`);
+    tooltipParts.push(`**Provider:** ${provider}`);
   }
-  tooltipParts.push(`Model ID: ${model.id}`);
-  tooltipParts.push(`Name: ${friendlyName}`);
-  const tooltip = tooltipParts.join('\n');
+  tooltipParts.push(`**Model ID:** \`${model.id}\``);
+  tooltipParts.push(`**Name:** ${friendlyName}`);
+  const tooltip = tooltipParts.join('  \n');
 
   const info: BuildModelInfoResult['info'] = {
     id: model.id,

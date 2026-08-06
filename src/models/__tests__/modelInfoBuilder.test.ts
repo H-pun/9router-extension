@@ -216,7 +216,7 @@ describe('buildModelInfo description and tooltip', () => {
     });
     assert.equal(
       info.tooltip,
-      'Provider: ocg\nModel ID: ocg/deepseek-v4-pro\nName: Deepseek V4 Pro (ocg)'
+      '**Provider:** ocg  \n**Model ID:** `ocg/deepseek-v4-pro`  \n**Name:** Deepseek V4 Pro (ocg)'
     );
   });
 
@@ -229,7 +229,7 @@ describe('buildModelInfo description and tooltip', () => {
     });
     assert.equal(
       info.tooltip,
-      'Model ID: gpt-4o-mini\nName: Gpt 4o Mini'
+      '**Model ID:** `gpt-4o-mini`  \n**Name:** Gpt 4o Mini'
     );
   });
 
