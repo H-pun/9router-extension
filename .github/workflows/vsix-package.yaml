@@ -67,8 +67,6 @@ jobs:
     name: Publish to VS Code Marketplace
     environment: production
     if: startsWith(github.ref, 'refs/tags/')
-    needs:
-      - build
 
     runs-on: ubuntu-latest
     timeout-minutes: 15
