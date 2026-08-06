@@ -209,7 +209,7 @@ export class ModelCatalog {
           defaultMaxTokens: config.defaultMaxTokens,
           defaultMaxOutputTokens: config.defaultMaxOutputTokens,
           capabilities: {
-            // Priority: discovered > 9 Router capabilities > user setting.
+            // Priority: discovered > 9Router capabilities > user setting.
             // `undefined` means the backend didn't say (e.g. older Ollama),
             // so keep the setting.
             imageInput:

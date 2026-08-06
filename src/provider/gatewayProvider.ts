@@ -132,7 +132,7 @@ export class GatewayProvider
   };
 
   constructor(context: vscode.ExtensionContext) {
-    this.outputChannel = vscode.window.createOutputChannel('9 Router');
+    this.outputChannel = vscode.window.createOutputChannel('9Router');
     const log = (msg: string): void => this.outputChannel.appendLine(msg);
 
     this.secretsManager = new SecretsManager(context.secrets, {
@@ -279,7 +279,7 @@ export class GatewayProvider
     const outcome = await this.catalog.getOrFetchModels(token);
     if (!options.silent && outcome.error) {
       promptOpenSettings(
-        `9 Router: Failed to fetch models. ${diagnoseModelFetchError(outcome.error)}`,
+        `9Router: Failed to fetch models. ${diagnoseModelFetchError(outcome.error)}`,
         (msg) => this.outputChannel.appendLine(msg)
       );
     }

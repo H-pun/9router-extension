@@ -1,18 +1,18 @@
-# 9 Router for GitHub Copilot
+# 9Router for GitHub Copilot
 
-Use **9 Router** and any OpenAI-compatible model inside GitHub Copilot Chat — with automatic fixes for the rough edges that self-hosted models produce.
+Use **9Router** and any OpenAI-compatible model inside GitHub Copilot Chat — with automatic fixes for the rough edges that self-hosted models produce.
 
 ## Quick Start
 
 1. **Install** from the VS Code Marketplace.
-2. Open **Settings** → search `9 Router` → set **Server URL** to your endpoint (e.g. `http://localhost:20128/v1`).
-3. Use the **Configure Server** command (`Cmd+Shift+P` → "9 Router: Configure Server") to set your API key.
-4. In Copilot Chat, open the model picker → **Manage Models** → enable models under **9 Router**.
+2. Open **Settings** → search `9Router` → set **Server URL** to your endpoint (e.g. `http://localhost:20128/v1`).
+3. Use the **Configure Server** command (`Cmd+Shift+P` → "9Router: Configure Server") to set your API key.
+4. In Copilot Chat, open the model picker → **Manage Models** → enable models under **9Router**.
 5. Select a model and start chatting.
 
 ## Why This Over Native BYOK?
 
-VS Code's built-in BYOK works great for well-behaved models. 9 Router adds a resilience layer for when things break:
+VS Code's built-in BYOK works great for well-behaved models. 9Router adds a resilience layer for when things break:
 
 - **Tool calls fail with bad JSON?** Repairs truncated arguments and fills missing required fields.
 - **Reasoning models leak `<think>` blocks?** Routes them into Copilot's thinking UI, not your chat.
@@ -23,7 +23,7 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 ## Servers Supported
 
-9 Router, vLLM, Ollama, llama.cpp, LM Studio, LocalAI, LiteLLM — any OpenAI-compatible endpoint.
+9Router, vLLM, Ollama, llama.cpp, LM Studio, LocalAI, LiteLLM — any OpenAI-compatible endpoint.
 
 ## Key Settings
 
@@ -40,11 +40,11 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 | Command                              | Purpose                                      |
 | ------------------------------------ | -------------------------------------------- |
-| **9 Router: Configure Server**       | Set server URL and API key                   |
-| **9 Router: Test Server Connection** | Verify connectivity and list models          |
-| **9 Router: Refresh Models**         | Re-probe the server for model changes        |
-| **9 Router: Edit Custom Headers**    | Manage custom HTTP headers (stored securely) |
-| **9 Router: Show Output Log**        | View debug output                            |
+| **9Router: Configure Server**       | Set server URL and API key                   |
+| **9Router: Test Server Connection** | Verify connectivity and list models          |
+| **9Router: Refresh Models**         | Re-probe the server for model changes        |
+| **9Router: Edit Custom Headers**    | Manage custom HTTP headers (stored securely) |
+| **9Router: Show Output Log**        | View debug output                            |
 
 ## Troubleshooting
 
@@ -64,7 +64,7 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 ## Utility Tasks (Titles, Commit Messages)
 
 By default, Copilot sends chat titles and commit messages to GitHub. Route them to your own model instead:
-- Open Settings → set `chat.utilityModel` and `chat.utilitySmallModel` to a 9 Router model.
+- Open Settings → set `chat.utilityModel` and `chat.utilitySmallModel` to a 9Router model.
 
 ## Privacy
 

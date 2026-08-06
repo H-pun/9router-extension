@@ -127,7 +127,7 @@ export class ConfigService {
       this.lastInvalidUrlNotified = url;
       setImmediate(() => {
         this.deps.promptOpenSettings(
-          `9 Router: Invalid Server URL ${JSON.stringify(url)}. Open Settings to fix.`
+          `9Router: Invalid Server URL ${JSON.stringify(url)}. Open Settings to fix.`
         );
       });
     }
@@ -145,7 +145,7 @@ export class ConfigService {
     if (last?.output !== issue.output || last?.total !== issue.total) {
       this.lastOutputTokenAdjustmentNotified = { output: issue.output, total: issue.total };
       vscode.window.showWarningMessage(
-        `9 Router: 'defaultMaxOutputTokens' was >= 'defaultMaxTokens'. Adjusted to ${issue.adjusted} to avoid request errors.`
+        `9Router: 'defaultMaxOutputTokens' was >= 'defaultMaxTokens'. Adjusted to ${issue.adjusted} to avoid request errors.`
       );
     }
   }

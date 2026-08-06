@@ -13,13 +13,13 @@ export async function configureServerFlow(
   refreshStatusBar: () => Promise<void>
 ): Promise<void> {
   const config = vscode.workspace.getConfiguration('9router-for-github-copilot');
-  const currentUrl = config.get<string>('serverUrl', 'http://localhost:8000');
+  const currentUrl = config.get<string>('serverUrl', 'http://localhost:20128/v1');
 
   const url = await vscode.window.showInputBox({
-    title: '9 Router — Server URL',
+    title: '9Router — Server URL',
     prompt: 'Enter the inference server URL (OpenAI-compatible endpoint)',
     value: currentUrl,
-    placeHolder: 'http://localhost:8000',
+    placeHolder: 'http://localhost:20128/v1',
     ignoreFocusOut: true,
     validateInput: (value) => {
       try {
@@ -33,7 +33,7 @@ export async function configureServerFlow(
   if (url === undefined) { return; } // cancelled
 
   const apiKey = await vscode.window.showInputBox({
-    title: '9 Router — API Key',
+    title: '9Router — API Key',
     prompt: 'Enter the API key — saved to VS Code\'s secret storage. Leave empty to clear.',
     password: true,
     placeHolder: 'Optional',
@@ -82,7 +82,7 @@ async function offerAdvancedSettings(provider: GatewayProvider): Promise<void> {
   const pick = await vscode.window.showQuickPick(
     [completePick, headersPick, advancedPick],
     {
-      title: '9 Router — Configuration saved',
+      title: '9Router — Configuration saved',
       placeHolder: 'Done, or continue to advanced options?',
       ignoreFocusOut: true,
     }
@@ -131,7 +131,7 @@ async function pickConfigurationTarget(
     : [workspacePick, globalPick];
 
   const pick = await vscode.window.showQuickPick(items, {
-    title: '9 Router — Save settings to',
+    title: '9Router — Save settings to',
     placeHolder: 'Choose where these settings should apply',
     ignoreFocusOut: true,
   });

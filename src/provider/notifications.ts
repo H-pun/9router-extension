@@ -29,7 +29,7 @@ export function promptOpenSettings(message: string, log: Logger): void {
 function promptToolCallingError(log: Logger, showOutput: () => void): void {
   vscode.window
     .showErrorMessage(
-      `9 Router: Model failed to generate valid tool calls. This model may not support function calling. Check Output panel for details.`,
+      `9Router: Model failed to generate valid tool calls. This model may not support function calling. Check Output panel for details.`,
       'Open Output',
       'Disable Tool Calling'
     )
@@ -82,7 +82,7 @@ export function handleChatError(error: unknown, log: Logger, showOutput: () => v
     // reported window and the char/4 estimate drifted). Give the user an
     // actionable fix instead of the raw server body.
     promptOpenSettings(
-      `9 Router: Request exceeded the model's context window (server reports ${overflowContext} tokens). ` +
+      `9Router: Request exceeded the model's context window (server reports ${overflowContext} tokens). ` +
         `Retry the request — the gateway now budgets for this limit. If it recurs, set 'modelContextWindows' for this model to a value below ${overflowContext}.`,
       log
     );
@@ -95,7 +95,7 @@ export function handleChatError(error: unknown, log: Logger, showOutput: () => v
     promptToolCallingError(log, showOutput);
   } else {
     vscode.window.showErrorMessage(
-      `9 Router: Chat request failed. ${errorMessage}`
+      `9Router: Chat request failed. ${errorMessage}`
     );
   }
 

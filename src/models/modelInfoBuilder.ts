@@ -15,7 +15,7 @@ import { TOKEN_CONSTANTS } from '../chat/tokenBudget';
  * shape native Copilot Chat BYOK providers use (e.g. `detail: 'Anthropic'`),
  * which is what visually groups all of our models under the provider.
  */
-export const PROVIDER_DETAIL_LABEL = '9 Router';
+export const PROVIDER_DETAIL_LABEL = '9Router';
 
 /**
  * Cost-tier multiplier surfaced to Copilot Chat. Set to 0 so BYOK / self-hosted
@@ -89,7 +89,7 @@ export function buildModelInfo({
   const serverContext = serverReportedContext(model);
   const totalContext =
     contextOverride ?? discoveredContext ?? serverContext ?? defaultMaxTokens;
-  // 9 Router `capabilities.maxOutput` is an authoritative ceiling (issue #199).
+  // 9Router `capabilities.maxOutput` is an authoritative ceiling (issue #199).
   const modelMaxOutput = model.capabilities?.maxOutput;
   const computedMaxOutput = Math.min(
     defaultMaxOutputTokens,

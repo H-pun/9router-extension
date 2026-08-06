@@ -170,5 +170,5 @@ export function formatMigrationToast(result: MigrationResult): string | undefine
   if (result.apiKeyMigrated) { moved.push('API key'); }
   if (result.customHeadersMigrated) { moved.push('custom headers'); }
   if (moved.length === 0) { return undefined; }
-  return `9 Router: ${moved.join(' and ')} moved into VS Code's secret storage. Use "Configure Server" to update them.`;
+  return `9Router: ${moved.join(' and ')} moved into VS Code's secret storage. Use "Configure Server" to update them.`;
 }

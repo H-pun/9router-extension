@@ -27,7 +27,7 @@ describe('buildModelInfo first-party look-and-feel fields', () => {
       capabilities: {},
     });
     assert.equal(info.detail, PROVIDER_DETAIL_LABEL);
-    assert.equal(info.detail, '9 Router');
+    assert.equal(info.detail, '9Router');
   });
 
   test('sets multiplierNumeric to 0 so BYOK models do not appear premium', () => {

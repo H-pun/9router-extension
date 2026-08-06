@@ -14,7 +14,7 @@ export interface OpenAIModel {
   /** llama.cpp */
   context_window?: number;
   /**
-   * 9 Router capabilities block. Carries contextWindow,
+   * 9Router capabilities block. Carries contextWindow,
    * maxOutput, vision, tools, reasoning, search, and other feature flags.
    */
   capabilities?: {

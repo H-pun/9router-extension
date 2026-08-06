@@ -1,5 +1,5 @@
 /**
- * Renders the 9 Router status popup as the GHCP-style hover card. Lives in
+ * Renders the 9Router status popup as the GHCP-style hover card. Lives in
  * the status-bar `MarkdownString` tooltip — the closest stable-API analogue
  * to GHCP's floating popup (which uses the proposed `chatStatusItem` API
  * marketplace extensions can't enable).
@@ -106,7 +106,7 @@ function renderHeader(snapshot: StatusSnapshot): string {
   const host = snapshot.host || 'not configured';
   return [
     '<table width="100%"><tr>',
-    `<td><strong>9 Router</strong>&nbsp;${mutedSpan(esc(host))}</td>`,
+    `<td><strong>9Router</strong>&nbsp;${mutedSpan(esc(host))}</td>`,
     `<td align="right"><a href="command:${TOOLTIP_COMMANDS.Refresh}" title="Refresh model list">$(refresh) Refresh</a></td>`,
     '</tr></table>',
   ].join('');

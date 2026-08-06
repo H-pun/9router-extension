@@ -40,7 +40,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.StatusBarAlignment.Right,
     100
   );
-  statusBar.name = '9 Router';
+  statusBar.name = '9Router';
   // Click refreshes the gateway. The rich GHCP-style popup is the hover
   // tooltip — it's the closest stable-API approximation to a floating
   // status-bar popup. Clicking is wired to a useful action so the bar
@@ -54,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     () =>
       vscode.workspace
         .getConfiguration('9router-for-github-copilot')
-        .get<string>('serverUrl', 'http://localhost:8000'),
+        .get<string>('serverUrl', 'http://localhost:20128/v1'),
     () => provider.getStatusSnapshot()
   );
   context.subscriptions.push(

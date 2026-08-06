@@ -139,7 +139,7 @@ describe('renderStatusTooltipHtml — sanitizer conformance', () => {
 describe('renderStatusTooltipHtml — header', () => {
   test('contains the gateway name, host, and a Refresh command link', () => {
     const html = renderStatusTooltipHtml(makeSnapshot());
-    assert.ok(html.includes('<strong>9 Router</strong>'));
+    assert.ok(html.includes('<strong>9Router</strong>'));
     assert.ok(html.includes('localhost:8000'));
     assert.ok(html.includes(`href="command:${TOOLTIP_COMMANDS.Refresh}"`));
   });

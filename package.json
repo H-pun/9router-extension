@@ -1,10 +1,10 @@
 {
   "name": "9router-for-github-copilot",
-  "displayName": "9 Router (OpenAI compatible)",
-  "description": "Connect GitHub Copilot to 9 Router and any OpenAI-compatible server for open-source models",
+  "displayName": "9Router for Github Copilot (OpenAI compatible)",
+  "description": "Connect GitHub Copilot to 9Router and any OpenAI-compatible server for open-source models",
   "version": "1.8.0",
   "publisher": "hotrungnhan",
-  "icon": "assets/copilot-llm-gateway.png",
+  "icon": "assets/icon.png",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -49,7 +49,7 @@
     "languageModelChatProviders": [
       {
         "vendor": "9router-github-copilot",
-        "displayName": "9 Router",
+        "displayName": "9Router",
         "configuration": {
           "properties": {
             "apiKey": {
@@ -66,35 +66,35 @@
       {
         "command": "9router-for-github-copilot.manage",
         "title": "Configure Server",
-        "category": "9 Router"
+        "category": "9Router"
       },
       {
         "command": "9router-for-github-copilot.testConnection",
         "title": "Test Server Connection",
-        "category": "9 Router"
+        "category": "9Router"
       },
       {
         "command": "9router-for-github-copilot.refreshModels",
         "title": "Refresh Models",
-        "category": "9 Router"
+        "category": "9Router"
       },
       {
         "command": "9router-for-github-copilot.editCustomHeaders",
         "title": "Edit Custom Headers",
-        "category": "9 Router"
+        "category": "9Router"
       },
       {
         "command": "9router-for-github-copilot.showOutput",
         "title": "Show Output Log",
-        "category": "9 Router"
+        "category": "9Router"
       }
     ],
     "configuration": {
-      "title": "9 Router",
+      "title": "9Router",
       "properties": {
         "9router-for-github-copilot.serverUrl": {
           "type": "string",
-          "default": "http://localhost:8000",
+          "default": "http://localhost:20128/v1",
           "description": "Inference server URL (OpenAI API compatible endpoint)",
           "order": 1
         },
@@ -102,7 +102,7 @@
           "type": "string",
           "default": "",
           "description": "Deprecated. Use the 'Configure Server' command to store the API key in VS Code's secret storage. Any value entered here is migrated and cleared on extension activation.",
-          "deprecationMessage": "API keys are now stored in VS Code's secret storage. Use the '9 Router: Configure Server' command to set the API key.",
+          "deprecationMessage": "API keys are now stored in VS Code's secret storage. Use the '9Router: Configure Server' command to set the API key.",
           "order": 2
         },
         "9router-for-github-copilot.requestTimeout": {
@@ -162,7 +162,7 @@
             "type": "string"
           },
           "description": "Deprecated. Use the 'Edit Custom Headers' command to store headers in VS Code's secret storage. Any value entered here is migrated and cleared on extension activation.",
-          "deprecationMessage": "Custom headers (which may carry credentials such as 'Authorization') are now stored in VS Code's secret storage. Use the '9 Router: Edit Custom Headers' command.",
+          "deprecationMessage": "Custom headers (which may carry credentials such as 'Authorization') are now stored in VS Code's secret storage. Use the '9Router: Edit Custom Headers' command.",
           "order": 11
         },
         "9router-for-github-copilot.extraModelOptions": {
@@ -251,5 +251,8 @@
     "esbuild": "^0.28.1",
     "eslint": "^10.8.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
-  }
+  },
+  "trustedDependencies": [
+    "@vscode/vsce-sign"
+  ]
 }

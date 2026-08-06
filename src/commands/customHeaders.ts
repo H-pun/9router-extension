@@ -18,7 +18,7 @@ export async function editCustomHeadersFlow(provider: GatewayProvider): Promise<
     const items = buildHeaderQuickPickItems(headerNames);
 
     const pick = await vscode.window.showQuickPick(items, {
-      title: `9 Router — Custom Headers (${headerNames.length})`,
+      title: `9Router — Custom Headers (${headerNames.length})`,
       placeHolder:
         headerNames.length === 0
           ? 'No custom headers yet. Add one or close.'
@@ -87,7 +87,7 @@ async function addHeader(
   current: Record<string, string>
 ): Promise<void> {
   const name = await vscode.window.showInputBox({
-    title: '9 Router — New header name',
+    title: '9Router — New header name',
     prompt: 'e.g. Authorization, Anthropic-Version, HTTP-Referer',
     ignoreFocusOut: true,
     validateInput: (value) => {
@@ -98,7 +98,7 @@ async function addHeader(
   });
   if (!name) { return; }
   const value = await vscode.window.showInputBox({
-    title: `9 Router — Value for ${name}`,
+    title: `9Router — Value for ${name}`,
     prompt: 'Saved to VS Code\'s secret storage',
     password: true,
     ignoreFocusOut: true,
@@ -118,7 +118,7 @@ async function editOrDeleteHeader(
       { label: 'Remove header', description: 'Delete this header entirely' },
     ],
     {
-      title: `9 Router — ${name}`,
+      title: `9Router — ${name}`,
       placeHolder: 'Choose an action',
       ignoreFocusOut: true,
     }
@@ -133,7 +133,7 @@ async function editOrDeleteHeader(
   }
 
   const value = await vscode.window.showInputBox({
-    title: `9 Router — New value for ${name}`,
+    title: `9Router — New value for ${name}`,
     prompt: 'Saved to VS Code\'s secret storage',
     password: true,
     ignoreFocusOut: true,

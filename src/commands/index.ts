@@ -36,18 +36,18 @@ export function registerCommands(
           if (models.length > 0) {
             statusManager.setIdle(models.map((m) => m.id));
             vscode.window.showInformationMessage(
-              `9 Router: Successfully connected! Found ${models.length} model(s): ${models.map((m) => m.name).join(', ')}`
+              `9Router: Successfully connected! Found ${models.length} model(s): ${models.map((m) => m.name).join(', ')}`
             );
           } else {
             statusManager.setNoModels();
             vscode.window.showWarningMessage(
-              '9 Router: Connected but no models found.'
+              '9Router: Connected but no models found.'
             );
           }
         } catch (error) {
           statusManager.setError(error instanceof Error ? error.message : String(error));
           vscode.window.showErrorMessage(
-            `9 Router: Connection test failed. ${error instanceof Error ? error.message : String(error)}`
+            `9Router: Connection test failed. ${error instanceof Error ? error.message : String(error)}`
           );
         } finally {
           cts.dispose();
