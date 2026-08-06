@@ -38,8 +38,8 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 ## Commands
 
-| Command                              | Purpose                                      |
-| ------------------------------------ | -------------------------------------------- |
+| Command                             | Purpose                                      |
+| ----------------------------------- | -------------------------------------------- |
 | **9Router: Configure Server**       | Set server URL and API key                   |
 | **9Router: Test Server Connection** | Verify connectivity and list models          |
 | **9Router: Refresh Models**         | Re-probe the server for model changes        |
@@ -69,6 +69,10 @@ By default, Copilot sends chat titles and commit messages to GitHub. Route them 
 ## Privacy
 
 Prompts and code go to **your server only**. Copilot Chat (the VS Code host) may send its own auth, telemetry, and title requests to GitHub — route utility tasks to your server to minimise this.
+
+## Credits
+
+This project is a fork of [arbs-io/github-copilot-llm-gateway](https://github.com/arbs-io/github-copilot-llm-gateway). Thanks to the original authors for the base extension.
 
 ## License
 
