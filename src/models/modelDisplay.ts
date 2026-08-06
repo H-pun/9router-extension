@@ -38,14 +38,14 @@ const FAMILY_KEYWORDS: Array<{ match: RegExp; family: string }> = [
 
 /**
  * Infer a VS Code `family` value from the model ID. Falls back to
- * `'llm-gateway'` so the picker still groups all gateway models together when
+ * `'9router'` so the picker still groups all gateway models together when
  * the family can't be determined.
  */
 export function inferModelFamily(id: string): string {
   for (const { match, family } of FAMILY_KEYWORDS) {
     if (match.test(id)) { return family; }
   }
-  return 'llm-gateway';
+  return '9router';
 }
 
 /**

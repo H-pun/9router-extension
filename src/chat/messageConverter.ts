@@ -162,7 +162,7 @@ export function convertMessage(
       case 'image':
         if (!options.enableImageInput) {
           log(
-            `  Skipping data part: mimeType=${part.mimeType}, size=${part.data.length} bytes. (Please enable github.copilot.llm-gateway.enableImageInput in settings)`
+            `  Skipping data part: mimeType=${part.mimeType}, size=${part.data.length} bytes. (Please enable 9router-for-github-copilot.enableImageInput in settings)`
           );
           break;
         }

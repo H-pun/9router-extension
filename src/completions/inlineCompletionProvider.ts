@@ -37,7 +37,7 @@ function delay(ms: number, token: vscode.CancellationToken): Promise<void> {
  * bring-your-own-key models power its own inline suggestions
  * (microsoft/vscode#318545) — so the gateway offers its own, running alongside
  * GitHub Copilot rather than through it. It is opt-in via
- * `github.copilot.llm-gateway.enableInlineCompletion`.
+ * `9router-for-github-copilot.enableInlineCompletion`.
  */
 export class GatewayInlineCompletionProvider
   implements vscode.InlineCompletionItemProvider

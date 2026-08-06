@@ -1,5 +1,5 @@
 /**
- * Renders the LLM Gateway status popup as the GHCP-style hover card. Lives in
+ * Renders the 9 Router status popup as the GHCP-style hover card. Lives in
  * the status-bar `MarkdownString` tooltip — the closest stable-API analogue
  * to GHCP's floating popup (which uses the proposed `chatStatusItem` API
  * marketplace extensions can't enable).
@@ -42,15 +42,15 @@ import {
 
 /** Commands referenced by the popup's footer action links. */
 export const TOOLTIP_COMMANDS = {
-  Refresh: 'github.copilot.llm-gateway.refreshModels',
-  Configure: 'github.copilot.llm-gateway.manage',
-  Output: 'github.copilot.llm-gateway.showOutput',
-  TestConnection: 'github.copilot.llm-gateway.testConnection',
-  EditHeaders: 'github.copilot.llm-gateway.editCustomHeaders',
+  Refresh: '9router-for-github-copilot.refreshModels',
+  Configure: '9router-for-github-copilot.manage',
+  Output: '9router-for-github-copilot.showOutput',
+  TestConnection: '9router-for-github-copilot.testConnection',
+  EditHeaders: '9router-for-github-copilot.editCustomHeaders',
   OpenSettings: 'workbench.action.openSettings',
 } as const;
 
-const SETTINGS_QUERY = 'github.copilot.llm-gateway';
+const SETTINGS_QUERY = '9router-for-github-copilot';
 /** Cap models listed in the popup; remainder collapses to "and N more". */
 const TOOLTIP_MODEL_LIST_MAX = 8;
 /**
@@ -106,7 +106,7 @@ function renderHeader(snapshot: StatusSnapshot): string {
   const host = snapshot.host || 'not configured';
   return [
     '<table width="100%"><tr>',
-    `<td><strong>LLM Gateway</strong>&nbsp;${mutedSpan(esc(host))}</td>`,
+    `<td><strong>9 Router</strong>&nbsp;${mutedSpan(esc(host))}</td>`,
     `<td align="right"><a href="command:${TOOLTIP_COMMANDS.Refresh}" title="Refresh model list">$(refresh) Refresh</a></td>`,
     '</tr></table>',
   ].join('');

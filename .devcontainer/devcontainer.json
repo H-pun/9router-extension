@@ -49,11 +49,11 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "ms-vscode.vscode-typescript-next",
-        "andrewbutson.github-copilot-llm-gateway"
+        "hotrungnhan.9router-for-github-copilot"
       ]
     }
   },
   "forwardPorts": [],
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "bun install",
   "remoteUser": "node"
 }

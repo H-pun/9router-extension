@@ -14,7 +14,7 @@ export function promptOpenSettings(message: string, log: Logger): void {
       if (selection === 'Open Settings') {
         vscode.commands.executeCommand(
           'workbench.action.openSettings',
-          'github.copilot.llm-gateway'
+          '9router-for-github-copilot'
         );
       }
     },
@@ -29,7 +29,7 @@ export function promptOpenSettings(message: string, log: Logger): void {
 function promptToolCallingError(log: Logger, showOutput: () => void): void {
   vscode.window
     .showErrorMessage(
-      `GitHub Copilot LLM Gateway: Model failed to generate valid tool calls. This model may not support function calling. Check Output panel for details.`,
+      `9 Router: Model failed to generate valid tool calls. This model may not support function calling. Check Output panel for details.`,
       'Open Output',
       'Disable Tool Calling'
     )
@@ -39,7 +39,7 @@ function promptToolCallingError(log: Logger, showOutput: () => void): void {
           showOutput();
         } else if (selection === 'Disable Tool Calling') {
           vscode.workspace
-            .getConfiguration('github.copilot.llm-gateway')
+            .getConfiguration('9router-for-github-copilot')
             .update('enableToolCalling', false, vscode.ConfigurationTarget.Global);
         }
       },
@@ -82,7 +82,7 @@ export function handleChatError(error: unknown, log: Logger, showOutput: () => v
     // reported window and the char/4 estimate drifted). Give the user an
     // actionable fix instead of the raw server body.
     promptOpenSettings(
-      `GitHub Copilot LLM Gateway: Request exceeded the model's context window (server reports ${overflowContext} tokens). ` +
+      `9 Router: Request exceeded the model's context window (server reports ${overflowContext} tokens). ` +
         `Retry the request — the gateway now budgets for this limit. If it recurs, set 'modelContextWindows' for this model to a value below ${overflowContext}.`,
       log
     );
@@ -95,7 +95,7 @@ export function handleChatError(error: unknown, log: Logger, showOutput: () => v
     promptToolCallingError(log, showOutput);
   } else {
     vscode.window.showErrorMessage(
-      `GitHub Copilot LLM Gateway: Chat request failed. ${errorMessage}`
+      `9 Router: Chat request failed. ${errorMessage}`
     );
   }
 

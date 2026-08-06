@@ -45,7 +45,7 @@ export class ConfigService {
   }
 
   private readRawConfig(): GatewayConfig {
-    const config = vscode.workspace.getConfiguration('github.copilot.llm-gateway');
+    const config = vscode.workspace.getConfiguration('9router-for-github-copilot');
     return {
       serverUrl: config.get<string>('serverUrl', FALLBACK_SERVER_URL),
       apiKey: this.deps.getApiKey(),
@@ -127,7 +127,7 @@ export class ConfigService {
       this.lastInvalidUrlNotified = url;
       setImmediate(() => {
         this.deps.promptOpenSettings(
-          `GitHub Copilot LLM Gateway: Invalid Server URL ${JSON.stringify(url)}. Open Settings to fix.`
+          `9 Router: Invalid Server URL ${JSON.stringify(url)}. Open Settings to fix.`
         );
       });
     }
@@ -137,7 +137,7 @@ export class ConfigService {
     issue: Extract<ConfigIssue, { kind: 'outputTokensAdjusted' }>
   ): void {
     this.deps.log(
-      `WARNING: github.copilot.llm-gateway.defaultMaxOutputTokens (${issue.output}) >= defaultMaxTokens (${issue.total}). Adjusting to ${issue.adjusted}.`
+      `WARNING: 9router-for-github-copilot.defaultMaxOutputTokens (${issue.output}) >= defaultMaxTokens (${issue.total}). Adjusting to ${issue.adjusted}.`
     );
     // Only pop a toast when the values the user is typing actually change,
     // otherwise every keystroke during settings editing produces a warning.
@@ -145,7 +145,7 @@ export class ConfigService {
     if (last?.output !== issue.output || last?.total !== issue.total) {
       this.lastOutputTokenAdjustmentNotified = { output: issue.output, total: issue.total };
       vscode.window.showWarningMessage(
-        `GitHub Copilot LLM Gateway: 'defaultMaxOutputTokens' was >= 'defaultMaxTokens'. Adjusted to ${issue.adjusted} to avoid request errors.`
+        `9 Router: 'defaultMaxOutputTokens' was >= 'defaultMaxTokens'. Adjusted to ${issue.adjusted} to avoid request errors.`
       );
     }
   }

@@ -10,7 +10,7 @@ import { renderStatusTooltipHtml } from './statusTooltip';
 const RESPONDED_DISPLAY_MS = 10_000;
 
 /**
- * Drives the LLM Gateway status bar. Pure rendering lives in
+ * Drives the 9 Router status bar. Pure rendering lives in
  * `statusBarRenderer.ts`; this class only handles the VS Code-side state
  * machine: timers, in-flight counting, mapping events onto state transitions.
  */

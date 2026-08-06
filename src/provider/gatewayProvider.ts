@@ -47,15 +47,15 @@ export type { RequestStateEvent } from './chatRequestHandler';
  * model refresh (issue #28). Those settings are deprecated for direct use.
  */
 const MODEL_AFFECTING_KEYS: readonly string[] = [
-  'github.copilot.llm-gateway.serverUrl',
-  'github.copilot.llm-gateway.apiKey',
-  'github.copilot.llm-gateway.requestTimeout',
-  'github.copilot.llm-gateway.defaultMaxTokens',
-  'github.copilot.llm-gateway.defaultMaxOutputTokens',
-  'github.copilot.llm-gateway.enableImageInput',
-  'github.copilot.llm-gateway.enableToolCalling',
-  'github.copilot.llm-gateway.customHeaders',
-  'github.copilot.llm-gateway.modelContextWindows',
+  '9router-for-github-copilot.serverUrl',
+  '9router-for-github-copilot.apiKey',
+  '9router-for-github-copilot.requestTimeout',
+  '9router-for-github-copilot.defaultMaxTokens',
+  '9router-for-github-copilot.defaultMaxOutputTokens',
+  '9router-for-github-copilot.enableImageInput',
+  '9router-for-github-copilot.enableToolCalling',
+  '9router-for-github-copilot.customHeaders',
+  '9router-for-github-copilot.modelContextWindows',
 ];
 
 /**
@@ -64,8 +64,8 @@ const MODEL_AFFECTING_KEYS: readonly string[] = [
  * SecretStorage instead of silently sitting in plain text (issue #28).
  */
 const LEGACY_SECRET_KEYS: readonly string[] = [
-  'github.copilot.llm-gateway.apiKey',
-  'github.copilot.llm-gateway.customHeaders',
+  '9router-for-github-copilot.apiKey',
+  '9router-for-github-copilot.customHeaders',
 ];
 
 /**
@@ -132,7 +132,7 @@ export class GatewayProvider
   };
 
   constructor(context: vscode.ExtensionContext) {
-    this.outputChannel = vscode.window.createOutputChannel('GitHub Copilot LLM Gateway');
+    this.outputChannel = vscode.window.createOutputChannel('9 Router');
     const log = (msg: string): void => this.outputChannel.appendLine(msg);
 
     this.secretsManager = new SecretsManager(context.secrets, {
@@ -179,7 +179,7 @@ export class GatewayProvider
       this._onDidChangeRequestState,
       this._onDidChangeStatusSnapshot,
       vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
-        if (!e.affectsConfiguration('github.copilot.llm-gateway')) {
+        if (!e.affectsConfiguration('9router-for-github-copilot')) {
           return;
         }
         this.outputChannel.appendLine('Configuration changed, reloading...');
@@ -279,7 +279,7 @@ export class GatewayProvider
     const outcome = await this.catalog.getOrFetchModels(token);
     if (!options.silent && outcome.error) {
       promptOpenSettings(
-        `GitHub Copilot LLM Gateway: Failed to fetch models. ${diagnoseModelFetchError(outcome.error)}`,
+        `9 Router: Failed to fetch models. ${diagnoseModelFetchError(outcome.error)}`,
         (msg) => this.outputChannel.appendLine(msg)
       );
     }

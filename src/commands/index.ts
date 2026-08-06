@@ -19,12 +19,12 @@ export function registerCommands(
     // Tooltip's "Show output log" link needs a registered command (command-link
     // anchors can't call class methods directly). Tiny wrapper around
     // provider.showOutput.
-    vscode.commands.registerCommand('github.copilot.llm-gateway.showOutput', () =>
+    vscode.commands.registerCommand('9router-for-github-copilot.showOutput', () =>
       provider.showOutput()
     ),
 
     vscode.commands.registerCommand(
-      'github.copilot.llm-gateway.testConnection',
+      '9router-for-github-copilot.testConnection',
       async () => {
         const cts = new vscode.CancellationTokenSource();
         try {
@@ -36,18 +36,18 @@ export function registerCommands(
           if (models.length > 0) {
             statusManager.setIdle(models.map((m) => m.id));
             vscode.window.showInformationMessage(
-              `GitHub Copilot LLM Gateway: Successfully connected! Found ${models.length} model(s): ${models.map((m) => m.name).join(', ')}`
+              `9 Router: Successfully connected! Found ${models.length} model(s): ${models.map((m) => m.name).join(', ')}`
             );
           } else {
             statusManager.setNoModels();
             vscode.window.showWarningMessage(
-              'GitHub Copilot LLM Gateway: Connected but no models found.'
+              '9 Router: Connected but no models found.'
             );
           }
         } catch (error) {
           statusManager.setError(error instanceof Error ? error.message : String(error));
           vscode.window.showErrorMessage(
-            `GitHub Copilot LLM Gateway: Connection test failed. ${error instanceof Error ? error.message : String(error)}`
+            `9 Router: Connection test failed. ${error instanceof Error ? error.message : String(error)}`
           );
         } finally {
           cts.dispose();
@@ -57,7 +57,7 @@ export function registerCommands(
 
     // "Configure Server" command — triggered by the "Add Models..." dropdown
     // via the managementCommand contribution.
-    vscode.commands.registerCommand('github.copilot.llm-gateway.manage', () =>
+    vscode.commands.registerCommand('9router-for-github-copilot.manage', () =>
       configureServerFlow(provider, refreshStatusBar)
     ),
 
@@ -66,7 +66,7 @@ export function registerCommands(
     // touching settings.json. Values are persisted via SecretStorage because
     // these headers commonly carry credentials (issue #28).
     vscode.commands.registerCommand(
-      'github.copilot.llm-gateway.editCustomHeaders',
+      '9router-for-github-copilot.editCustomHeaders',
       async () => {
         await editCustomHeadersFlow(provider);
         provider.invalidateModelCache();
@@ -79,7 +79,7 @@ export function registerCommands(
     // a re-fetch by editing settings, which was confusing when models
     // temporarily went missing.
     vscode.commands.registerCommand(
-      'github.copilot.llm-gateway.refreshModels',
+      '9router-for-github-copilot.refreshModels',
       async () => {
         // Invalidate the provider's cache so the next fetch is fresh, then
         // fire the change event (VS Code will re-call

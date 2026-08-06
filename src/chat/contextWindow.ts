@@ -29,11 +29,12 @@ function isUsableContext(value: unknown): value is number {
  */
 export function serverReportedContext(model: OpenAIModel): number | undefined {
   const candidates = [
-    model.max_model_len, // vLLM, LiteLLM
-    model.context_length, // Ollama, LocalAI, LM Studio
-    model.context_window, // llama.cpp (older builds)
-    model.meta?.n_ctx, // llama.cpp serving context
-    model.meta?.n_ctx_train, // llama.cpp training context
+    model.max_model_len,           // vLLM, LiteLLM
+    model.context_length,          // Ollama, LocalAI, LM Studio
+    model.context_window,          // llama.cpp (older builds)
+    model.capabilities?.contextWindow, // 9 Router
+    model.meta?.n_ctx,             // llama.cpp serving context
+    model.meta?.n_ctx_train,       // llama.cpp training context
   ];
   return candidates.find(isUsableContext);
 }

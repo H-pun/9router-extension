@@ -1,5 +1,5 @@
 /**
- * Pure renderer for the LLM Gateway status bar.
+ * Pure renderer for the 9 Router status bar.
  *
  * The status bar is context-aware: it shows a different summary depending on
  * whether the gateway is idle, actively streaming a response, has just
@@ -105,14 +105,14 @@ function renderProbing(
   // at activation.
   return {
     text: `${ICON_DISCONNECTED} ${stripPort(state.host) || 'gateway'}`,
-    tooltip: '**LLM Gateway**\n\nChecking connection…',
+    tooltip: '**9 Router**\n\nChecking connection…',
   };
 }
 
 function renderIdle(state: Extract<StatusBarState, { kind: 'idle' }>): StatusBarRender {
   const text = `${ICON_CONNECTED} ${stripPort(state.host)}`;
   const tooltip = [
-    '**LLM Gateway**',
+    '**9 Router**',
     '',
     `Server: \`${state.host}\``,
     `Models: ${state.modelCount} available`,
@@ -131,7 +131,7 @@ function renderStreaming(
   // the tooltip instead.
   const text = `${ICON_CONNECTED} ${stripPort(state.host)}`;
   const tooltip = [
-    '**LLM Gateway**',
+    '**9 Router**',
     '',
     state.activeCount > 1
       ? `Streaming ${state.activeCount} concurrent responses`
@@ -146,7 +146,7 @@ function renderResponded(
 ): StatusBarRender {
   const text = `${ICON_CONNECTED} ${stripPort(state.host)}`;
   const tooltipLines = [
-    '**LLM Gateway**',
+    '**9 Router**',
     '',
     `Last request: \`${state.modelId}\``,
     `Server: \`${state.host}\``,
@@ -165,7 +165,7 @@ function renderResponded(
 function renderError(state: Extract<StatusBarState, { kind: 'error' }>): StatusBarRender {
   const text = `${ICON_DISCONNECTED} ${stripPort(state.host)}`;
   const tooltip = [
-    '**LLM Gateway — Connection failed**',
+    '**9 Router — Connection failed**',
     '',
     `Server: \`${state.host}\``,
     '',
@@ -184,7 +184,7 @@ function renderNoModels(
   // in the tooltip and the dialog.
   const text = `${ICON_CONNECTED} ${stripPort(state.host)}`;
   const tooltip = [
-    '**LLM Gateway**',
+    '**9 Router**',
     '',
     `Server: \`${state.host}\``,
     'Connected, but no models were reported.',

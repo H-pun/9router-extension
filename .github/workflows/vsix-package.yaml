@@ -1,40 +1,117 @@
-name: VsixPackage
+name: VSIX Package
+
+run-name: VSIX • ${{ github.ref_name }} • ${{ github.event_name }}
 
 on:
   push:
     branches:
       - main
     tags:
-      # Publish to the Marketplace on a semver tag push (e.g. 1.2.0).
-      # A tag ref guarantees github.ref == refs/tags/<tag>, which the
-      # publish step below relies on. The previous `release: created`
-      # trigger could fire during the draft phase with the `main` ref,
-      # silently skipping the publish step.
-      - '[0-9]+.[0-9]+.[0-9]+'
+      # Publishes for tags such as 1.2.0.
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+# The workflow only needs repository read access.
+permissions:
+  contents: read
+
+# Cancel superseded branch/PR builds, but never cancel release-tag builds.
+concurrency:
+  group: vsix-package-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
   build:
+    name: Build (${{ matrix.os }})
+
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
     steps:
-      - name: Checkout Extension
+      - name: Checkout extension
         uses: actions/checkout@v4
-      - name: Install Node.js
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Cache Bun packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock', 'bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        # Frozen lockfile provides reproducible installs.
+        # Ignoring lifecycle scripts reduces install-time supply-chain risk.
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Build extension
+        run: bun run esbuild
+
+  publish:
+    name: Publish to VS Code Marketplace
+
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout extension
+        uses: actions/checkout@v4
+
+      # Keep an explicit Node runtime because @vscode/vsce is primarily
+      # distributed and tested as a Node.js CLI.
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Install Extension Dependencies
-        # --ignore-scripts blocks dependency lifecycle scripts from running at
-        # install time (supply-chain hardening). Safe here: all devDependencies
-        # (incl. esbuild, whose platform binary ships as an optionalDependency)
-        # work without install scripts.
-        run: npm ci --ignore-scripts
-      - name: Build Extension
-        run: npm run esbuild
-      - name: Publish Extension
-        if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
-        run: npm run deploy
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Cache Bun packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock', 'bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Verify tag matches package version
+        shell: bash
+        run: |
+          PACKAGE_VERSION="$(bun -p "require('./package.json').version")"
+
+          if [[ "$GITHUB_REF_NAME" != "$PACKAGE_VERSION" ]]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' does not match package.json version '$PACKAGE_VERSION'."
+            exit 1
+          fi
+
+      - name: Build extension
+        run: bun run esbuild
+
+      - name: Publish extension
+        run: bun run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}

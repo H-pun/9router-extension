@@ -139,7 +139,7 @@ describe('renderStatusTooltipHtml — sanitizer conformance', () => {
 describe('renderStatusTooltipHtml — header', () => {
   test('contains the gateway name, host, and a Refresh command link', () => {
     const html = renderStatusTooltipHtml(makeSnapshot());
-    assert.ok(html.includes('<strong>LLM Gateway</strong>'));
+    assert.ok(html.includes('<strong>9 Router</strong>'));
     assert.ok(html.includes('localhost:8000'));
     assert.ok(html.includes(`href="command:${TOOLTIP_COMMANDS.Refresh}"`));
   });
@@ -501,6 +501,6 @@ describe('renderStatusTooltipHtml — footer', () => {
     );
     assert.ok(match, 'expected encoded Open settings link');
     const decoded = JSON.parse(decodeURIComponent(match![1]));
-    assert.equal(decoded, 'github.copilot.llm-gateway');
+    assert.equal(decoded, '9router-for-github-copilot');
   });
 });

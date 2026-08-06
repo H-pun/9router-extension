@@ -151,7 +151,7 @@ export class SecretsManager {
    * small wrapper so the migration logic can be unit-tested without `vscode`.
    */
   private legacyConfigAccessor(): LegacyConfigAccessor {
-    const config = vscode.workspace.getConfiguration('github.copilot.llm-gateway');
+    const config = vscode.workspace.getConfiguration('9router-for-github-copilot');
     return {
       get: <T>(section: string, defaultValue: T): T => config.get<T>(section, defaultValue),
       inspect: <T>(section: string) => {

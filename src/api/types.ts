@@ -14,6 +14,26 @@ export interface OpenAIModel {
   /** llama.cpp */
   context_window?: number;
   /**
+   * 9 Router capabilities block. Carries contextWindow,
+   * maxOutput, vision, tools, reasoning, search, and other feature flags.
+   */
+  capabilities?: {
+    vision?: boolean;
+    pdf?: boolean;
+    audioInput?: boolean;
+    videoInput?: boolean;
+    imageOutput?: boolean;
+    audioOutput?: boolean;
+    search?: boolean;
+    tools?: boolean;
+    reasoning?: boolean;
+    thinkingFormat?: string;
+    thinkingCanDisable?: boolean;
+    thinkingRange?: unknown;
+    contextWindow?: number;
+    maxOutput?: number;
+  };
+  /**
    * llama.cpp nests model metadata here. `n_ctx` is the actual serving
    * context (`-c`); `n_ctx_train` the model's training context. In
    * llama-server router mode these appear only while the model is loaded

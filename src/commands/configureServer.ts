@@ -12,11 +12,11 @@ export async function configureServerFlow(
   provider: GatewayProvider,
   refreshStatusBar: () => Promise<void>
 ): Promise<void> {
-  const config = vscode.workspace.getConfiguration('github.copilot.llm-gateway');
+  const config = vscode.workspace.getConfiguration('9router-for-github-copilot');
   const currentUrl = config.get<string>('serverUrl', 'http://localhost:8000');
 
   const url = await vscode.window.showInputBox({
-    title: 'LLM Gateway — Server URL',
+    title: '9 Router — Server URL',
     prompt: 'Enter the inference server URL (OpenAI-compatible endpoint)',
     value: currentUrl,
     placeHolder: 'http://localhost:8000',
@@ -33,7 +33,7 @@ export async function configureServerFlow(
   if (url === undefined) { return; } // cancelled
 
   const apiKey = await vscode.window.showInputBox({
-    title: 'LLM Gateway — API Key',
+    title: '9 Router — API Key',
     prompt: 'Enter the API key — saved to VS Code\'s secret storage. Leave empty to clear.',
     password: true,
     placeHolder: 'Optional',
@@ -82,7 +82,7 @@ async function offerAdvancedSettings(provider: GatewayProvider): Promise<void> {
   const pick = await vscode.window.showQuickPick(
     [completePick, headersPick, advancedPick],
     {
-      title: 'LLM Gateway — Configuration saved',
+      title: '9 Router — Configuration saved',
       placeHolder: 'Done, or continue to advanced options?',
       ignoreFocusOut: true,
     }
@@ -92,7 +92,7 @@ async function offerAdvancedSettings(provider: GatewayProvider): Promise<void> {
   } else if (pick === advancedPick) {
     await vscode.commands.executeCommand(
       'workbench.action.openSettings',
-      'github.copilot.llm-gateway'
+      '9router-for-github-copilot'
     );
   }
 }
@@ -131,7 +131,7 @@ async function pickConfigurationTarget(
     : [workspacePick, globalPick];
 
   const pick = await vscode.window.showQuickPick(items, {
-    title: 'LLM Gateway — Save settings to',
+    title: '9 Router — Save settings to',
     placeHolder: 'Choose where these settings should apply',
     ignoreFocusOut: true,
   });

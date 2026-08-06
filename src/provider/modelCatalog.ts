@@ -209,10 +209,17 @@ export class ModelCatalog {
           defaultMaxTokens: config.defaultMaxTokens,
           defaultMaxOutputTokens: config.defaultMaxOutputTokens,
           capabilities: {
-            // A discovered capability verdict wins; `undefined` means the
-            // server didn't say (e.g. older Ollama), so keep the setting.
-            imageInput: config.enableImageInput && (discovered?.visionSupported ?? true),
-            toolCalling: config.enableToolCalling && (discovered?.toolsSupported ?? true),
+            // Priority: discovered > 9 Router capabilities > user setting.
+            // `undefined` means the backend didn't say (e.g. older Ollama),
+            // so keep the setting.
+            imageInput:
+              (discovered?.visionSupported ?? model.capabilities?.vision) === false
+                ? false
+                : config.enableImageInput && (discovered?.visionSupported ?? model.capabilities?.vision ?? true),
+            toolCalling:
+              (discovered?.toolsSupported ?? model.capabilities?.tools) === false
+                ? false
+                : config.enableToolCalling && (discovered?.toolsSupported ?? model.capabilities?.tools ?? true),
           },
           contextOverride,
           discoveredContext: discovered?.contextLength,
@@ -234,7 +241,7 @@ export class ModelCatalog {
           );
         } else {
           log(
-            `  Model ${model.id}: no server-reported context; using defaultMaxTokens=${totalContext}. If this is wrong, set 'github.copilot.llm-gateway.modelContextWindows'.`
+            `  Model ${model.id}: no server-reported context; using defaultMaxTokens=${totalContext}. If this is wrong, set '9router-for-github-copilot.modelContextWindows'.`
           );
         }
         if (discovered) {
@@ -318,7 +325,7 @@ export class ModelCatalog {
     this.learnedContextByModelId.set(model.id, serverContext);
     this.deps.log(
       `Learned context size for ${model.id} from server error: ${serverContext} tokens (was budgeting for ${current}). ` +
-        `Add it to 'github.copilot.llm-gateway.modelContextWindows' to persist across sessions.`
+        `Add it to '9router-for-github-copilot.modelContextWindows' to persist across sessions.`
     );
     return true;
   }

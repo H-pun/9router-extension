@@ -11,8 +11,8 @@
 
 /** Keys used in SecretStorage. Mirrors the legacy setting names so logs read clearly. */
 export const SECRET_KEYS = {
-  apiKey: 'github.copilot.llm-gateway.apiKey',
-  customHeaders: 'github.copilot.llm-gateway.customHeaders',
+  apiKey: '9router-for-github-copilot.apiKey',
+  customHeaders: '9router-for-github-copilot.customHeaders',
 } as const;
 
 /** Subset of `vscode.WorkspaceConfiguration` we use during migration. */
@@ -170,5 +170,5 @@ export function formatMigrationToast(result: MigrationResult): string | undefine
   if (result.apiKeyMigrated) { moved.push('API key'); }
   if (result.customHeadersMigrated) { moved.push('custom headers'); }
   if (moved.length === 0) { return undefined; }
-  return `LLM Gateway: ${moved.join(' and ')} moved into VS Code's secret storage. Use "Configure Server" to update them.`;
+  return `9 Router: ${moved.join(' and ')} moved into VS Code's secret storage. Use "Configure Server" to update them.`;
 }
