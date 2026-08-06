@@ -2,7 +2,7 @@
   "name": "9router-for-github-copilot",
   "displayName": "9 Router (OpenAI compatible)",
   "description": "Connect GitHub Copilot to 9 Router and any OpenAI-compatible server for open-source models",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "publisher": "hotrungnhan",
   "icon": "assets/copilot-llm-gateway.png",
   "private": true,
