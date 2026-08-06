@@ -6,7 +6,7 @@
  */
 
 import { OpenAIModel } from '../api/types';
-import { describeModel, friendlyModelName, inferModelFamily } from './modelDisplay';
+import { describeModel, friendlyModelName, inferModelFamily, parseModelId } from './modelDisplay';
 import { serverReportedContext } from '../chat/contextWindow';
 import { TOKEN_CONSTANTS } from '../chat/tokenBudget';
 
@@ -103,8 +103,16 @@ export function buildModelInfo({
     : computedMaxOutput;
 
   const description = describeModel(model);
-  const tooltip = description ? `${model.id} — ${description}` : model.id;
+  const { provider } = parseModelId(model.id);
   const friendlyName = friendlyModelName(model.id);
+
+  const tooltipParts: string[] = [];
+  if (provider) {
+    tooltipParts.push(`Provider: ${provider}`);
+  }
+  tooltipParts.push(`Model ID: ${model.id}`);
+  tooltipParts.push(`Name: ${friendlyName}`);
+  const tooltip = tooltipParts.join('\n');
 
   const info: BuildModelInfoResult['info'] = {
     id: model.id,

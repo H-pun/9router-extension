@@ -11,16 +11,53 @@ import { serverReportedContext } from '../chat/contextWindow';
 /**
  * Produce a display-friendly short name for a model ID.
  *
- * Hugging-Face-style IDs contain an org prefix (`Qwen/Qwen3-8B`) that the
- * Copilot model picker renders verbatim with a slash. Strip the prefix so the
- * picker shows `Qwen3-8B` (the owner is still available on the tooltip).
+ * Gateway-style IDs like `ocg/deepseek-v4-pro` become
+ * `Deepseek V4 Pro (ocg)`. Hugging-Face-style IDs like
+ * `Qwen/Qwen3-8B` also get the same treatment: `Qwen3 8B (Qwen)`.
+ * IDs without a slash are prettified in-place: `gpt-4o-mini` →
+ * `Gpt 4o Mini`.
  */
 export function friendlyModelName(id: string): string {
+  return parseModelId(id).displayName;
+}
+
+/** Parsed components of a model ID. */
+export interface ParsedModelId {
+  /** Provider prefix before the last `/`, or undefined if no slash. */
+  provider?: string;
+  /** Model portion after the last `/` (or the whole ID if no slash). */
+  modelPart: string;
+  /** Prettified display name: `Deepseek V4 Pro (ocg)`. */
+  displayName: string;
+}
+
+/**
+ * Split a model ID into provider, model part, and a human-friendly
+ * display name. Converts dash-separated tokens to Title Case and
+ * appends the provider in parentheses when present.
+ */
+export function parseModelId(id: string): ParsedModelId {
   const slash = id.lastIndexOf('/');
+  let provider: string | undefined;
+  let modelPart: string;
+
   if (slash >= 0 && slash < id.length - 1) {
-    return id.slice(slash + 1);
+    provider = id.slice(0, slash);
+    modelPart = id.slice(slash + 1);
+  } else {
+    modelPart = id;
   }
-  return id;
+
+  const prettyModel = modelPart
+    .split('-')
+    .map(seg => seg.charAt(0).toUpperCase() + seg.slice(1))
+    .join(' ');
+
+  const displayName = provider
+    ? `${prettyModel} (${provider})`
+    : prettyModel;
+
+  return { provider, modelPart, displayName };
 }
 
 const FAMILY_KEYWORDS: Array<{ match: RegExp; family: string }> = [

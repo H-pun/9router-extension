@@ -5,20 +5,53 @@ import {
   describeModel,
   friendlyModelName,
   inferModelFamily,
+  parseModelId,
 } from '../modelDisplay';
 
-describe('friendlyModelName', () => {
-  test('strips Hugging-Face org prefix', () => {
-    assert.equal(friendlyModelName('Qwen/Qwen3-8B'), 'Qwen3-8B');
-    assert.equal(friendlyModelName('meta-llama/Llama-3.1-8B-Instruct'), 'Llama-3.1-8B-Instruct');
+describe('parseModelId', () => {
+  test('splits provider and model part', () => {
+    const parsed = parseModelId('ocg/deepseek-v4-pro');
+    assert.equal(parsed.provider, 'ocg');
+    assert.equal(parsed.modelPart, 'deepseek-v4-pro');
   });
 
-  test('returns the id unchanged when there is no slash', () => {
-    assert.equal(friendlyModelName('gpt-4o-mini'), 'gpt-4o-mini');
+  test('no slash — no provider', () => {
+    const parsed = parseModelId('gpt-4o-mini');
+    assert.equal(parsed.provider, undefined);
+    assert.equal(parsed.modelPart, 'gpt-4o-mini');
+  });
+
+  test('produces title-cased display name with provider', () => {
+    assert.equal(
+      parseModelId('cx/gpt-5.6-sol').displayName,
+      'Gpt 5.6 Sol (cx)'
+    );
+    assert.equal(
+      parseModelId('ocg/deepseek-v4-pro').displayName,
+      'Deepseek V4 Pro (ocg)'
+    );
+  });
+});
+
+describe('friendlyModelName', () => {
+  test('pretty-prints gateway-style IDs with provider', () => {
+    assert.equal(friendlyModelName('cx/gpt-5.6-sol'), 'Gpt 5.6 Sol (cx)');
+    assert.equal(friendlyModelName('ocg/deepseek-v4-pro'), 'Deepseek V4 Pro (ocg)');
+  });
+
+  test('pretty-prints Hugging-Face org prefix with provider', () => {
+    assert.equal(friendlyModelName('Qwen/Qwen3-8B'), 'Qwen3 8B (Qwen)');
+    assert.equal(friendlyModelName('meta-llama/Llama-3.1-8B-Instruct'), 'Llama 3.1 8B Instruct (meta-llama)');
+  });
+
+  test('pretty-prints slashless IDs in title case', () => {
+    assert.equal(friendlyModelName('gpt-4o-mini'), 'Gpt 4o Mini');
   });
 
   test('handles trailing slash without breaking', () => {
-    assert.equal(friendlyModelName('foo/'), 'foo/');
+    const parsed = parseModelId('foo/');
+    assert.equal(parsed.provider, undefined);
+    assert.equal(parsed.modelPart, 'foo/');
   });
 });
 

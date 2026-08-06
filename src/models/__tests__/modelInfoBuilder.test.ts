@@ -53,15 +53,15 @@ describe('buildModelInfo first-party look-and-feel fields', () => {
 });
 
 describe('buildModelInfo id-derived fields', () => {
-  test('uses the friendly (post-slash) name', () => {
+  test('uses the friendly (title-cased, provider-suffixed) name', () => {
     const { info } = buildModelInfo({
       model: baseModel({ id: 'meta-llama/Llama-3.1-8B-Instruct' }),
       defaultMaxTokens: 8192,
       defaultMaxOutputTokens: 2048,
       capabilities: {},
     });
-    assert.equal(info.name, 'Llama-3.1-8B-Instruct');
-    assert.equal(info.version, 'Llama-3.1-8B-Instruct');
+    assert.equal(info.name, 'Llama 3.1 8B Instruct (meta-llama)');
+    assert.equal(info.version, 'Llama 3.1 8B Instruct (meta-llama)');
     assert.equal(info.id, 'meta-llama/Llama-3.1-8B-Instruct');
   });
 
@@ -207,6 +207,32 @@ describe('buildModelInfo output token math', () => {
 });
 
 describe('buildModelInfo description and tooltip', () => {
+  test('tooltip shows Provider, Model ID, Name on separate lines', () => {
+    const { info } = buildModelInfo({
+      model: baseModel({ id: 'ocg/deepseek-v4-pro', max_model_len: 131072, owned_by: 'ocg' }),
+      defaultMaxTokens: 8192,
+      defaultMaxOutputTokens: 2048,
+      capabilities: {},
+    });
+    assert.equal(
+      info.tooltip,
+      'Provider: ocg\nModel ID: ocg/deepseek-v4-pro\nName: Deepseek V4 Pro (ocg)'
+    );
+  });
+
+  test('tooltip omits Provider line when no slash in id', () => {
+    const { info } = buildModelInfo({
+      model: baseModel({ id: 'gpt-4o-mini', max_model_len: 131072, owned_by: 'openai' }),
+      defaultMaxTokens: 8192,
+      defaultMaxOutputTokens: 2048,
+      capabilities: {},
+    });
+    assert.equal(
+      info.tooltip,
+      'Model ID: gpt-4o-mini\nName: Gpt 4o Mini'
+    );
+  });
+
   test('includes description when describeModel returns content', () => {
     const { info } = buildModelInfo({
       model: baseModel({ max_model_len: 32768, owned_by: 'vllm' }),
@@ -216,7 +242,6 @@ describe('buildModelInfo description and tooltip', () => {
     });
     assert.ok(info.description, 'expected description to be set');
     assert.ok(info.description!.includes('ctx'));
-    assert.equal(info.tooltip, `qwen/Qwen3-8B — ${info.description}`);
   });
 
   test('omits description when describeModel returns an empty string', () => {
@@ -228,7 +253,6 @@ describe('buildModelInfo description and tooltip', () => {
       capabilities: {},
     });
     assert.equal(info.description, undefined);
-    assert.equal(info.tooltip, 'qwen/Qwen3-8B');
   });
 });
 
