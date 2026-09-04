@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { RequestStateEvent } from '../provider/gatewayProvider';
 import { StatusBarState, renderStatusBar } from './statusBarRenderer';
-import { TokenUsage } from './sessionStats';
 import { extractHost } from './format';
 import { StatusSnapshot } from './statusSnapshot';
 import { renderStatusTooltipHtml } from './statusTooltip';
@@ -25,10 +24,9 @@ export class StatusBarManager implements vscode.Disposable {
 
   constructor(
     private readonly item: vscode.StatusBarItem,
-    private readonly getServerUrl: () => string,
     private readonly getSnapshot: () => StatusSnapshot
   ) {
-    this.state = { kind: 'probing', host: extractHost(this.getServerUrl()) };
+    this.state = { kind: 'probing', host: this.host() };
     this.render();
   }
 
@@ -46,8 +44,8 @@ export class StatusBarManager implements vscode.Disposable {
     this.cancelRespondedRevert();
   }
 
-  setIdle(modelIds: readonly string[]): void {
-    this.cachedIdle = { host: this.host(), modelIds };
+  setIdle(modelIds: readonly string[], hostOverride?: string): void {
+    this.cachedIdle = { host: hostOverride ?? this.host(), modelIds };
     this.cancelRespondedRevert();
     this.applyIdle();
   }
@@ -117,7 +115,7 @@ export class StatusBarManager implements vscode.Disposable {
       host: this.host(),
       modelId: event.modelId,
       modelName: event.modelName,
-      ...(event.usage ? { usage: this.toUsage(event.usage) } : {}),
+      ...(event.usage ? { usage: event.usage } : {}),
     };
     this.render();
     this.scheduleRespondedRevert();
@@ -126,10 +124,6 @@ export class StatusBarManager implements vscode.Disposable {
   private onRequestError(event: Extract<RequestStateEvent, { kind: 'error' }>): void {
     this.activeRequestCount = Math.max(0, this.activeRequestCount - 1);
     this.setError(event.errorMessage);
-  }
-
-  private toUsage(usage: TokenUsage): TokenUsage {
-    return { prompt: usage.prompt, completion: usage.completion, total: usage.total };
   }
 
   private applyIdle(): void {
@@ -158,7 +152,7 @@ export class StatusBarManager implements vscode.Disposable {
   }
 
   private host(): string {
-    return extractHost(this.getServerUrl());
+    return extractHost(this.getSnapshot().host);
   }
 
   private render(): void {

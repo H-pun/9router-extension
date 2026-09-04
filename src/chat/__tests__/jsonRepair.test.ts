@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { balanceBrackets, countChar, repairInvalidEscapes, tryRepairJson } from '../jsonRepair';
+import { balanceStructures, countChar, repairInvalidEscapes, tryRepairJson } from '../jsonRepair';
 
 describe('countChar', () => {
   test('counts literal occurrences of a character', () => {
@@ -26,31 +26,31 @@ describe('countChar', () => {
   });
 });
 
-describe('balanceBrackets', () => {
+describe('balanceStructures', () => {
   test('adds missing closing braces', () => {
-    assert.equal(balanceBrackets('{"a":1'), '{"a":1}');
-    assert.equal(balanceBrackets('{"a":{"b":1'), '{"a":{"b":1}}');
+    assert.equal(balanceStructures('{"a":1'), '{"a":1}');
+    assert.equal(balanceStructures('{"a":{"b":1'), '{"a":{"b":1}}');
   });
 
   test('adds missing closing brackets', () => {
-    assert.equal(balanceBrackets('[1,2,3'), '[1,2,3]');
-    assert.equal(balanceBrackets('[[1,2'), '[[1,2]]');
+    assert.equal(balanceStructures('[1,2,3'), '[1,2,3]');
+    assert.equal(balanceStructures('[[1,2'), '[[1,2]]');
   });
 
   test('adds both missing brackets and braces', () => {
-    assert.equal(balanceBrackets('{"a":[1,2'), '{"a":[1,2]}');
+    assert.equal(balanceStructures('{"a":[1,2'), '{"a":[1,2]}');
   });
 
   test('does not touch balanced input', () => {
-    assert.equal(balanceBrackets('{"a":1}'), '{"a":1}');
-    assert.equal(balanceBrackets('[1,2,3]'), '[1,2,3]');
-    assert.equal(balanceBrackets(''), '');
+    assert.equal(balanceStructures('{"a":1}'), '{"a":1}');
+    assert.equal(balanceStructures('[1,2,3]'), '[1,2,3]');
+    assert.equal(balanceStructures(''), '');
   });
 
   test('does not remove characters when overclosed', () => {
     // If there are more closers than openers, don't touch it.
-    assert.equal(balanceBrackets('1,2]'), '1,2]');
-    assert.equal(balanceBrackets('a}'), 'a}');
+    assert.equal(balanceStructures('1,2]'), '1,2]');
+    assert.equal(balanceStructures('a}'), 'a}');
   });
 });
 

@@ -9,6 +9,18 @@ import { SessionStats, TokenUsage } from './sessionStats';
 
 export type ConnectionState = 'ok' | 'error' | 'noModels' | 'unknown';
 
+export interface ProfileSummary {
+  readonly id: string;
+  readonly name: string;
+  readonly serverUrl: string;
+  readonly enabled: boolean;
+  readonly modelCount: number;
+  readonly connectionState: ConnectionState;
+  readonly errorMessage?: string;
+  readonly models?: readonly ModelSummary[];
+  readonly features?: FeatureFlags;
+}
+
 export interface ModelSummary {
   readonly id: string;
   readonly name: string;
@@ -25,6 +37,7 @@ export interface LastRequestInfo {
   readonly modelName: string;
   readonly completedAt: number;
   readonly usage?: TokenUsage;
+  readonly profileName?: string;
 }
 
 export interface FeatureFlags {
@@ -41,6 +54,7 @@ export interface StatusSnapshot {
   readonly host: string;
   readonly connection: { readonly state: ConnectionState; readonly errorMessage?: string };
   readonly lastSuccessfulFetchAt?: number;
+  readonly profiles?: readonly ProfileSummary[];
   readonly models: readonly ModelSummary[];
   readonly sessionStats: SessionStats;
   readonly lastRequest?: LastRequestInfo;

@@ -51,10 +51,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const statusManager = new StatusBarManager(
     statusBar,
-    () =>
-      vscode.workspace
-        .getConfiguration('9router-for-github-copilot')
-        .get<string>('serverUrl', 'http://localhost:20128/v1'),
     () => provider.getStatusSnapshot()
   );
   context.subscriptions.push(

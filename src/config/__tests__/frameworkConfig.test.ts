@@ -32,10 +32,10 @@ describe('readFrameworkConfiguration', () => {
     assert.deepEqual(readFrameworkConfiguration({ apiKey: { nested: 'x' } }), {});
   });
 
-  test('does not extract serverUrl (kept in workspace settings for issue #23)', () => {
+  test('extracts serverUrl when present and trimmed', () => {
     assert.deepEqual(
-      readFrameworkConfiguration({ apiKey: 'k', serverUrl: 'http://x' }),
-      { apiKey: 'k' }
+      readFrameworkConfiguration({ apiKey: 'k', serverUrl: ' http://x ' }),
+      { apiKey: 'k', serverUrl: 'http://x' }
     );
   });
 

@@ -61,7 +61,7 @@ jobs:
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Build extension
-        run: bun run esbuild
+        run: bun run build
 
   publish:
     name: Publish to VS Code Marketplace
@@ -107,7 +107,7 @@ jobs:
           fi
 
       - name: Build extension
-        run: bun run esbuild
+        run: bun run build
 
       - name: Publish extension
         run: bun run deploy

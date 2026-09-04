@@ -112,35 +112,6 @@ export interface OpenAICompletionResponse {
   }>;
 }
 
-export interface OpenAIChatCompletionChunk {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: Array<{
-    index: number;
-    delta: {
-      role?: string;
-      content?: string;
-      tool_calls?: Array<{
-        id: string;
-        type: 'function';
-        function: {
-          name: string;
-          arguments: string;
-        };
-      }>;
-    };
-    finish_reason: string | null;
-  }>;
-  /**
-   * Present only on the trailing chunk when the request asked for
-   * `stream_options.include_usage = true`. OpenAI omits `choices` (or sends
-   * an empty array) on that chunk.
-   */
-  usage?: OpenAIUsage;
-}
-
 /**
  * OpenAI-compatible token usage stats. `prompt_tokens_details.cached_tokens`
  * is supported by OpenAI and a growing set of compatible servers; absent
@@ -153,20 +124,4 @@ export interface OpenAIUsage {
   prompt_tokens_details?: {
     cached_tokens?: number;
   };
-}
-
-export interface OpenAIChatCompletionResponse {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: Array<{
-    index: number;
-    message: {
-      role: string;
-      content: string;
-    };
-    finish_reason: string;
-  }>;
-  usage: OpenAIUsage;
 }

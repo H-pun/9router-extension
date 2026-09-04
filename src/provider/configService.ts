@@ -1,35 +1,26 @@
 import * as vscode from 'vscode';
 import { GatewayConfig } from '../config/gatewayConfig';
 import { TOKEN_CONSTANTS } from '../chat/tokenBudget';
+import { Profile } from '../profiles/profileTypes';
 import {
   ConfigIssue,
   DEFAULT_REQUEST_TIMEOUT_MS,
   FALLBACK_SERVER_URL,
-  MAX_REQUEST_TIMEOUT_MS,
   validateGatewayConfig,
 } from './configValidation';
 
 interface ConfigServiceDeps {
-  /** Resolved API key — framework override wins over the SecretStorage cache. */
-  getApiKey: () => string;
-  /** Custom headers snapshot from the SecretStorage cache. */
-  getCustomHeaders: () => Record<string, string>;
   log: (message: string) => void;
   promptOpenSettings: (message: string) => void;
 }
 
 /**
- * Reads the extension's workspace settings into a validated `GatewayConfig`.
+ * Reads the extension's workspace settings and merges them with a specific
+ * {@link Profile} into a validated `GatewayConfig`.
  *
- * `apiKey` and `customHeaders` come from the in-memory secret cache
- * populated by the secrets manager. The legacy plain-text settings of the
- * same name are still read by the migration path, but are cleared once
- * their values are safely in SecretStorage (issue #28). Until the secrets
- * load, the cache holds empty values — an early model fetch would just send
- * unauthenticated requests.
- *
- * Owns the notification-dedupe state so the user isn't toasted on every
- * keystroke while editing a value in the settings UI.
+ * Workspace-level settings (timeouts, tool calling, token limits, perModelOptions)
+ * apply across all profiles, while endpoint, apiKey, and customHeaders come
+ * directly from the selected profile.
  */
 export class ConfigService {
   /** Tracks the last values we warned about, to avoid notification spam on each keystroke in the settings UI. */
@@ -38,17 +29,21 @@ export class ConfigService {
 
   constructor(private readonly deps: ConfigServiceDeps) {}
 
-  public load(): GatewayConfig {
-    const { config, issues } = validateGatewayConfig(this.readRawConfig());
+  /**
+   * Load configuration resolved for a given profile.
+   */
+  public loadForProfile(profile: Profile, apiKeyOverride?: string): GatewayConfig {
+    const raw = this.readRawConfig(profile, apiKeyOverride);
+    const { config, issues } = validateGatewayConfig(raw);
     this.reportIssues(issues);
     return config;
   }
 
-  private readRawConfig(): GatewayConfig {
+  private readRawConfig(profile: Profile, apiKeyOverride?: string): GatewayConfig {
     const config = vscode.workspace.getConfiguration('9router-for-github-copilot');
     return {
-      serverUrl: config.get<string>('serverUrl', FALLBACK_SERVER_URL),
-      apiKey: this.deps.getApiKey(),
+      serverUrl: profile.serverUrl || FALLBACK_SERVER_URL,
+      apiKey: apiKeyOverride ?? profile.apiKey ?? '',
       requestTimeout: config.get<number>('requestTimeout', DEFAULT_REQUEST_TIMEOUT_MS),
       defaultMaxTokens: config.get<number>('defaultMaxTokens', TOKEN_CONSTANTS.DEFAULT_CONTEXT_TOKENS),
       defaultMaxOutputTokens: config.get<number>(
@@ -60,11 +55,12 @@ export class ConfigService {
       parallelToolCalling: config.get<boolean>('parallelToolCalling', true),
       agentTemperature: config.get<number>('agentTemperature', 0),
       verboseLogging: config.get<boolean>('verboseLogging', false),
-      customHeaders: { ...this.deps.getCustomHeaders() },
+      customHeaders: { ...(profile.customHeaders ?? {}) },
       extraModelOptions: config.get<Record<string, unknown>>('extraModelOptions', {}) ?? {},
       perModelOptions: config.get<Record<string, unknown>>('perModelOptions', {}) ?? {},
       modelContextWindows: config.get<Record<string, number>>('modelContextWindows', {}) ?? {},
       enableInlineCompletion: config.get<boolean>('enableInlineCompletion', false),
+      inlineCompletionProvider: config.get<string>('inlineCompletionProvider', ''),
       inlineCompletionModel: config.get<string>('inlineCompletionModel', ''),
       inlineCompletionMaxTokens: config.get<number>('inlineCompletionMaxTokens', 256),
       inlineCompletionDebounce: config.get<number>('inlineCompletionDebounce', 300),
@@ -81,12 +77,9 @@ export class ConfigService {
    */
   private reportIssues(issues: ConfigIssue[]): void {
     if (!issues.some((i) => i.kind === 'invalidServerUrl')) {
-      // URL became valid — reset the dedupe key so future invalid values are
-      // re-surfaced.
       this.lastInvalidUrlNotified = undefined;
     }
     if (!issues.some((i) => i.kind === 'outputTokensAdjusted')) {
-      // Valid configuration — reset the dedupe key.
       this.lastOutputTokenAdjustmentNotified = undefined;
     }
 
@@ -99,54 +92,44 @@ export class ConfigService {
           break;
         case 'requestTimeoutClamped':
           this.deps.log(
-            `WARNING: requestTimeout (${issue.value}) exceeds the maximum value of ${MAX_REQUEST_TIMEOUT_MS} ms (signed 32-bit integer). Setting to ${MAX_REQUEST_TIMEOUT_MS}.`
+            `WARNING: requestTimeout clamped to maximum supported value`
           );
           break;
         case 'invalidServerUrl':
-          this.reportInvalidUrl(issue.url);
+          this.deps.log(
+            `ERROR: serverUrl '${issue.url}' is not a valid URL; falling back to ${FALLBACK_SERVER_URL}`
+          );
+          if (this.lastInvalidUrlNotified !== issue.url) {
+            this.lastInvalidUrlNotified = issue.url;
+            this.deps.promptOpenSettings(
+              `9Router: Invalid server URL '${issue.url}'. Please check your settings.`
+            );
+          }
           break;
         case 'outputTokensAdjusted':
-          this.reportOutputTokensAdjusted(issue);
+          this.deps.log(
+            `WARNING: defaultMaxOutputTokens (${issue.output}) >= defaultMaxTokens (${issue.total}); adjusting to ${issue.adjusted}`
+          );
+          if (
+            !this.lastOutputTokenAdjustmentNotified ||
+            this.lastOutputTokenAdjustmentNotified.output !== issue.output ||
+            this.lastOutputTokenAdjustmentNotified.total !== issue.total
+          ) {
+            this.lastOutputTokenAdjustmentNotified = {
+              output: issue.output,
+              total: issue.total,
+            };
+            this.deps.promptOpenSettings(
+              `9Router: defaultMaxOutputTokens (${issue.output}) was adjusted to ${issue.adjusted} ` +
+                `because it exceeds defaultMaxTokens (${issue.total}).`
+            );
+          }
           break;
         default: {
           const _never: never = issue;
-          throw new Error(`Unexpected config issue: ${String(_never)}`);
+          throw new Error(`Unexpected config issue: ${JSON.stringify(_never)}`);
         }
       }
-    }
-  }
-
-  private reportInvalidUrl(url: string): void {
-    this.deps.log(
-      `ERROR: Invalid server URL ${JSON.stringify(url)}. Falling back to ${FALLBACK_SERVER_URL}; fix this in settings.`
-    );
-    // Only surface the UI prompt if we haven't already warned about this
-    // exact value — otherwise the user gets a new modal for every keystroke
-    // while they're typing a URL in settings.
-    if (this.lastInvalidUrlNotified !== url) {
-      this.lastInvalidUrlNotified = url;
-      setImmediate(() => {
-        this.deps.promptOpenSettings(
-          `9Router: Invalid Server URL ${JSON.stringify(url)}. Open Settings to fix.`
-        );
-      });
-    }
-  }
-
-  private reportOutputTokensAdjusted(
-    issue: Extract<ConfigIssue, { kind: 'outputTokensAdjusted' }>
-  ): void {
-    this.deps.log(
-      `WARNING: 9router-for-github-copilot.defaultMaxOutputTokens (${issue.output}) >= defaultMaxTokens (${issue.total}). Adjusting to ${issue.adjusted}.`
-    );
-    // Only pop a toast when the values the user is typing actually change,
-    // otherwise every keystroke during settings editing produces a warning.
-    const last = this.lastOutputTokenAdjustmentNotified;
-    if (last?.output !== issue.output || last?.total !== issue.total) {
-      this.lastOutputTokenAdjustmentNotified = { output: issue.output, total: issue.total };
-      vscode.window.showWarningMessage(
-        `9Router: 'defaultMaxOutputTokens' was >= 'defaultMaxTokens'. Adjusted to ${issue.adjusted} to avoid request errors.`
-      );
     }
   }
 }
