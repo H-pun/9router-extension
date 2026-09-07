@@ -5,10 +5,9 @@ Use **9Router** and any OpenAI-compatible model inside GitHub Copilot Chat — w
 ## Quick Start
 
 1. **Install** from the VS Code Marketplace.
-2. Open **Settings** → search `9Router` → set **Server URL** to your endpoint (e.g. `http://localhost:20128/v1`).
-3. Use the **Configure Server** command (`Cmd+Shift+P` → "9Router: Configure Server") to set your API key.
-4. In Copilot Chat, open the model picker → **Manage Models** → enable models under **9Router**.
-5. Select a model and start chatting.
+2. Use the **Manage Providers** command (`Cmd+Shift+P` → "9Router: Manage Providers") or click the status bar to configure your endpoint and API key.
+3. In Copilot Chat, open the model picker → **Manage Models** → enable models under **9Router**.
+4. Select a model and start chatting.
 
 ## Why This Over Native BYOK?
 
@@ -40,7 +39,8 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 | Command                             | Purpose                                      |
 | ----------------------------------- | -------------------------------------------- |
-| **9Router: Configure Server**       | Set server URL and API key                   |
+| **9Router: Manage Providers**       | Manage provider profiles, URLs, and API keys |
+| **9Router: Add Provider**           | Add a new provider endpoint profile          |
 | **9Router: Test Server Connection** | Verify connectivity and list models          |
 | **9Router: Refresh Models**         | Re-probe the server for model changes        |
 | **9Router: Edit Custom Headers**    | Manage custom HTTP headers (stored securely) |

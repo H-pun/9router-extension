@@ -175,13 +175,6 @@ export function balanceStructures(str: string): string {
 }
 
 /**
- * Back-compat alias — older call sites (and tests) use `balanceBrackets`.
- * The new name is `balanceStructures` because the function also closes
- * unclosed string literals, not just brackets.
- */
-export const balanceBrackets = balanceStructures;
-
-/**
  * Try to parse a JSON argument string, applying repair heuristics if the
  * direct parse fails. Returns the parsed value, {} for empty input, or null
  * if repair ultimately fails.

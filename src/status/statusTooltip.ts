@@ -92,6 +92,7 @@ export function renderStatusTooltipHtml(snapshot: StatusSnapshot): string {
   return [
     renderHeader(snapshot),
     renderConnection(snapshot),
+    renderProviders(snapshot),
     renderSession(snapshot),
     renderLastRequest(snapshot),
     renderModels(snapshot),
@@ -100,6 +101,55 @@ export function renderStatusTooltipHtml(snapshot: StatusSnapshot): string {
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+function renderProviders(snapshot: StatusSnapshot): string {
+  if (!snapshot.profiles || snapshot.profiles.length === 0) {
+    return '';
+  }
+
+  const rows = snapshot.profiles.map((p) => {
+    let icon = '$(vm-active)';
+    let status = `${esc(p.modelCount)} model(s)`;
+    if (!p.enabled) {
+      icon = '$(circle-slash)';
+      status = 'Disabled';
+    } else if (p.errorMessage) {
+      icon = '$(error)';
+      status = 'Error';
+    }
+
+    const feats: string[] = [];
+    if (p.features?.toolCalling) {
+      feats.push('tools');
+    }
+    if (p.features?.imageInput) {
+      feats.push('vision');
+    }
+    if (p.features?.inlineCompletion) {
+      feats.push('inline');
+    }
+    const featPills = feats
+      .map((f) => `<span style="color:var(--vscode-badge-foreground);background-color:var(--vscode-badge-background);border-radius:4px;">&nbsp;${esc(f)}&nbsp;</span>`)
+      .join('&nbsp;');
+
+    const meta = featPills ? `&nbsp;${featPills}` : '';
+
+    return [
+      '<tr>',
+      `<td>${icon}&nbsp;<strong>${esc(p.name)}</strong>${meta}</td>`,
+      `<td align="right">${mutedSpan(esc(status))}</td>`,
+      '</tr>',
+    ].join('');
+  });
+
+  return [
+    '\n<hr>\n',
+    '<table width="100%"><tr><td><strong>Providers</strong></td><td align="right">',
+    mutedSpan(`${esc(snapshot.profiles.length)} configured`),
+    '</td></tr></table>',
+    `<table width="100%">${rows.join('')}</table>`,
+  ].join('');
 }
 
 function renderHeader(snapshot: StatusSnapshot): string {

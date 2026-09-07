@@ -50,7 +50,7 @@ export function buildChatRequest(options: ChatRequestOptions): OpenAIChatComplet
   if (options.extraOptions) {
     for (const [key, value] of Object.entries(options.extraOptions)) {
       if (!key.startsWith('_')) {
-        (request as any)[key] = value;
+        request[key] = value;
       }
     }
   }

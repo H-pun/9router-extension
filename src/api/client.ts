@@ -80,12 +80,6 @@ export interface GatewayStreamChunk {
 }
 
 /**
- * Re-export so existing imports of `StreamingToolCall` from this module keep
- * working without churn.
- */
-export type StreamingToolCall = AccumulatedToolCall;
-
-/**
  * Shape of an OpenAI streaming/non-streaming choice payload that we know
  * how to read. Kept loose; servers vary.
  */

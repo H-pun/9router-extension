@@ -32,6 +32,10 @@ export interface GatewayConfig {
    * suggestions (issue #44, microsoft/vscode#318545).
    */
   enableInlineCompletion: boolean;
+  /**
+   * Profile ID to route inline completions to. Empty string or undefined means "first enabled profile".
+   */
+  inlineCompletionProvider?: string;
   inlineCompletionModel: string;
   inlineCompletionMaxTokens: number;
   inlineCompletionDebounce: number;

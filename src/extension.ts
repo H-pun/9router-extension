@@ -41,20 +41,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     100
   );
   statusBar.name = '9Router';
-  // Click refreshes the gateway. The rich GHCP-style popup is the hover
-  // tooltip — it's the closest stable-API approximation to a floating
-  // status-bar popup. Clicking is wired to a useful action so the bar
-  // isn't dead.
-  statusBar.command = '9router-for-github-copilot.refreshModels';
+  // Clicking the status bar opens Manage Providers
+  statusBar.command = '9router-for-github-copilot.manage';
   statusBar.show();
   context.subscriptions.push(statusBar);
 
   const statusManager = new StatusBarManager(
     statusBar,
-    () =>
-      vscode.workspace
-        .getConfiguration('9router-for-github-copilot')
-        .get<string>('serverUrl', 'http://localhost:20128/v1'),
     () => provider.getStatusSnapshot()
   );
   context.subscriptions.push(
@@ -79,10 +72,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const refreshStatusBar = async (): Promise<void> => {
     const cts = new vscode.CancellationTokenSource();
     try {
-      const models = await provider.provideLanguageModelChatInformation(
-        { silent: true },
-        cts.token
-      );
+      const models = await provider.getAllModels(cts.token);
       if (models.length > 0) {
         statusManager.setIdle(models.map((m) => m.id));
       } else {

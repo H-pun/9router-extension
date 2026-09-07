@@ -133,8 +133,8 @@ describe('buildChatRequest', () => {
       },
     });
     assert.equal(req.top_p, 0.9);
-    assert.equal((req as any)._otelTraceContext, undefined);
-    assert.equal((req as any)._telemetryTurn, undefined);
-    assert.equal((req as any)._capturingTokenCorrelationId, undefined);
+    assert.equal(req['_otelTraceContext'], undefined);
+    assert.equal(req['_telemetryTurn'], undefined);
+    assert.equal(req['_capturingTokenCorrelationId'], undefined);
   });
 });
