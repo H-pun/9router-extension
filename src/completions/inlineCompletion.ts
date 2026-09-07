@@ -102,7 +102,7 @@ export function buildCompletionRequestBody(
  * model doesn't accept the parameter.
  */
 export function isSuffixUnsupportedError(status: number, body: string): boolean {
-  return status === 400 && /suffix\b[\s\S]{0,80}?not[\s\S]{0,40}?(?:support|permit)/i.test(body);
+  return (status === 400 || status === 422) && /suffix\b[\s\S]{0,80}?not[\s\S]{0,40}?(?:support|permit)/i.test(body);
 }
 
 /**
@@ -127,7 +127,7 @@ export function cleanCompletionText(text: string): string {
   // Manual scan instead of /\n+$/ — the anchored quantifier backtracks
   // super-linearly on adversarial input.
   let end = text.length;
-  while (end > 0 && text[end - 1] === '\n') {
+  while (end > 0 && (text[end - 1] === '\n' || text[end - 1] === '\r')) {
     end--;
   }
   return text.slice(0, end);

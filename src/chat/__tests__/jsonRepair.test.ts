@@ -1,30 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { balanceStructures, countChar, repairInvalidEscapes, tryRepairJson } from '../jsonRepair';
-
-describe('countChar', () => {
-  test('counts literal occurrences of a character', () => {
-    assert.equal(countChar('abcabc', 'a'), 2);
-    assert.equal(countChar('abcabc', 'c'), 2);
-    assert.equal(countChar('abcabc', 'z'), 0);
-  });
-
-  test('escapes regex metacharacters in search char', () => {
-    assert.equal(countChar('a.b.c', '.'), 2);
-    assert.equal(countChar('a+b+c', '+'), 2);
-    assert.equal(countChar('a[b]c[d]', '['), 2);
-    assert.equal(countChar('a{b}', '{'), 1);
-    assert.equal(countChar(String.raw`a\b\c`, '\\'), 2);
-  });
-
-  test('returns 0 for empty input', () => {
-    assert.equal(countChar('', 'a'), 0);
-  });
-
-  test('handles unicode characters', () => {
-    assert.equal(countChar('héllo hé', 'é'), 2);
-  });
-});
+import { balanceStructures, repairInvalidEscapes, tryRepairJson } from '../jsonRepair';
 
 describe('balanceStructures', () => {
   test('adds missing closing braces', () => {

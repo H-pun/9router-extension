@@ -22,21 +22,6 @@ const NOOP_LOGGER: RepairLogger = () => {
 };
 
 /**
- * Count literal occurrences of a single character in a string.
- * Does NOT understand string literals — use `balanceStructures` for anything
- * that needs to respect JSON quoting rules. Exported for tests.
- */
-export function countChar(str: string, char: string): number {
-  let count = 0;
-  for (const c of str) {
-    if (c === char) {
-      count++;
-    }
-  }
-  return count;
-}
-
-/**
  * Advance string-literal state by one character.
  * Returns the updated [inString, escaped] pair.
  */

@@ -35,12 +35,7 @@ export function formatTokenCount(n: number): string {
  * the bar rather than the literal word "invalid".
  */
 export function extractHost(serverUrl: string): string {
-  try {
-    const parsed = new URL(serverUrl);
-    return parsed.host || serverUrl;
-  } catch {
-    return serverUrl;
-  }
+  return URL.canParse(serverUrl) ? new URL(serverUrl).host || serverUrl : serverUrl;
 }
 
 /**

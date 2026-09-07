@@ -34,7 +34,7 @@ export function convertAllMessages(
   return result;
 }
 
-export function mapRole(role: vscode.LanguageModelChatMessageRole): NormalizedRole {
+function mapRole(role: vscode.LanguageModelChatMessageRole): NormalizedRole {
   if (role === vscode.LanguageModelChatMessageRole.Assistant) {
     return 'assistant';
   }
@@ -46,7 +46,7 @@ export function mapRole(role: vscode.LanguageModelChatMessageRole): NormalizedRo
  * messageConverter. Falls back to duck typing for older VS Code versions
  * where the constructors may not match.
  */
-export function classifyPart(part: unknown, log: Logger): NormalizedPart {
+function classifyPart(part: unknown, log: Logger): NormalizedPart {
   if (part instanceof vscode.LanguageModelTextPart) {
     return { kind: 'text', value: part.value };
   }

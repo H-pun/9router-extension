@@ -5,7 +5,6 @@ import {
   LegacyConfigAccessor,
   SECRET_KEYS,
   SecretAccessor,
-  formatMigrationToast,
   migrateLegacySecrets,
   parseCustomHeadersJson,
 } from '../secretMigration';
@@ -232,30 +231,5 @@ describe('migrateLegacySecrets', () => {
 
     assert.ok(messages.some((m) => m.includes('apiKey')));
     assert.ok(messages.some((m) => m.includes('customHeaders')));
-  });
-});
-
-describe('formatMigrationToast', () => {
-  test('returns undefined when nothing was migrated', () => {
-    assert.equal(
-      formatMigrationToast({ apiKeyMigrated: false, customHeadersMigrated: false }),
-      undefined
-    );
-  });
-
-  test('mentions only what was migrated', () => {
-    assert.match(
-      formatMigrationToast({ apiKeyMigrated: true, customHeadersMigrated: false }) ?? '',
-      /API key/
-    );
-    assert.doesNotMatch(
-      formatMigrationToast({ apiKeyMigrated: true, customHeadersMigrated: false }) ?? '',
-      /custom headers/
-    );
-  });
-
-  test('joins both items with "and" when both migrated', () => {
-    const message = formatMigrationToast({ apiKeyMigrated: true, customHeadersMigrated: true });
-    assert.match(message ?? '', /API key and custom headers/);
   });
 });

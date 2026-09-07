@@ -26,35 +26,37 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 ## Key Settings
 
-| Setting                                          | Default                    | What it does                                            |
-| ------------------------------------------------ | -------------------------- | ------------------------------------------------------- |
-| `9router-for-github-copilot.serverUrl`           | `http://localhost:8000/v1` | Your inference server base URL                          |
-| `9router-for-github-copilot.defaultMaxTokens`    | `262144`                   | Fallback context window                                 |
-| `9router-for-github-copilot.enableToolCalling`   | `true`                     | Allow agent tools (file ops, terminal, etc.)            |
-| `9router-for-github-copilot.agentTemperature`    | `0`                        | Tool-call stability (lower = stricter)                  |
-| `9router-for-github-copilot.modelContextWindows` | `{}`                       | Per-model context overrides, e.g. `{"qwen3-8b": 32768}` |
-| `9router-for-github-copilot.perModelOptions`     | `{}`                       | Per-model sampler params (temperature, top_p, etc.)     |
+| Setting                                          | Default                     | What it does                                            |
+| ------------------------------------------------ | --------------------------- | ------------------------------------------------------- |
+| `9router-for-github-copilot.serverUrl`           | `http://localhost:20128/v1` | Your inference server base URL                          |
+| `9router-for-github-copilot.defaultMaxTokens`    | `262144`                    | Fallback context window                                 |
+| `9router-for-github-copilot.enableToolCalling`   | `true`                      | Allow agent tools (file ops, terminal, etc.)            |
+| `9router-for-github-copilot.agentTemperature`    | `0`                         | Tool-call stability (lower = stricter)                  |
+| `9router-for-github-copilot.modelContextWindows` | `{}`                        | Per-model context overrides, e.g. `{"qwen3-8b": 32768}` |
+| `9router-for-github-copilot.perModelOptions`     | `{}`                        | Per-model sampler params (temperature, top_p, etc.)     |
 
 ## Commands
 
-| Command                             | Purpose                                      |
-| ----------------------------------- | -------------------------------------------- |
-| **9Router: Manage Providers**       | Manage provider profiles, URLs, and API keys |
-| **9Router: Add Provider**           | Add a new provider endpoint profile          |
-| **9Router: Test Server Connection** | Verify connectivity and list models          |
-| **9Router: Refresh Models**         | Re-probe the server for model changes        |
-| **9Router: Edit Custom Headers**    | Manage custom HTTP headers (stored securely) |
-| **9Router: Show Output Log**        | View debug output                            |
+| Command                                        | Purpose                                      |
+| ---------------------------------------------- | -------------------------------------------- |
+| **9Router: Manage Providers**                  | Manage provider profiles, URLs, and API keys |
+| **9Router: Add Provider**                      | Add a new provider endpoint profile          |
+| **9Router: Test Server Connection**            | Verify connectivity and list models          |
+| **9Router: Refresh Models**                    | Re-probe the server for model changes        |
+| **9Router: Edit Custom Headers**               | Manage custom HTTP headers (stored securely) |
+| **9Router: Select Inline Completion Model**    | Choose the model used for inline completions |
+| **9Router: Show Output Log**                   | View debug output                            |
 
 ## Troubleshooting
 
-**Models not showing?** Run `curl <server-url>/v1/models` to verify the server is up. Make sure the URL has no trailing `/v1` or slash. Run the **Test Server Connection** command for a diagnostic.
+**Models not showing?** Run `curl <server-url>/v1/models` to verify the server is up (trailing `/v1` is handled automatically). Run the **Test Server Connection** command for a diagnostic.
 
 **Tool calls output as text instead of executing?** Set **Agent Temperature** to `0`, disable **Parallel Tool Calling**, and confirm your server has `--enable-auto-tool-choice` (vLLM).
 
 **Context overflow errors?** Add the model to `modelContextWindows` with the correct limit. The extension learns the real limit from the error and retries once automatically.
 
 **Models not in the Agents window?** Agents window runs in a separate process. Add this to settings and reload:
+
 ```jsonc
 "extensions.supportAgentsWindow": {
   "hotrungnhan.9router-for-github-copilot": true
@@ -64,6 +66,7 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 ## Utility Tasks (Titles, Commit Messages)
 
 By default, Copilot sends chat titles and commit messages to GitHub. Route them to your own model instead:
+
 - Open Settings → set `chat.utilityModel` and `chat.utilitySmallModel` to a 9Router model.
 
 ## Privacy

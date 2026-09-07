@@ -28,10 +28,6 @@ import { ProfileStore } from '../profiles/profileStore';
 import { Profile, DEFAULT_PROFILE_ID } from '../profiles/profileTypes';
 import { ProfileRuntime } from './profileRuntime';
 import { formatExposedModelId, parseModelTarget } from '../profiles/modelNamespace';
-import {
-  syncChatLanguageModelsGroups,
-  getChatLanguageModelsGroupsForVendor,
-} from '../profiles/groupSync';
 import { promptOpenSettings } from './notifications';
 import { countMessageTokens } from './vscodeParts';
 
@@ -54,7 +50,6 @@ export class GatewayProvider
   private readonly profileStore: ProfileStore;
   private readonly runtimes: Map<string, ProfileRuntime> = new Map();
   private readonly frameworkOverride: FrameworkConfigOverride = {};
-  private groupResolutionIndex = 0;
 
   private readonly _onDidChangeLanguageModelChatInformation = new vscode.EventEmitter<void>();
   readonly onDidChangeLanguageModelChatInformation = this._onDidChangeLanguageModelChatInformation.event;
@@ -127,9 +122,6 @@ export class GatewayProvider
   public async loadSecrets(): Promise<void> {
     await this.profileStore.load();
     this.syncRuntimes();
-    void syncChatLanguageModelsGroups(this.profileStore.getProfiles(), (msg) =>
-      this.outputChannel.appendLine(msg)
-    );
   }
 
   public syncRuntimes(): void {
@@ -181,7 +173,6 @@ export class GatewayProvider
     }
 
     this._onDidChangeStatusSnapshot.fire();
-    void syncChatLanguageModelsGroups(profiles, (msg) => this.outputChannel.appendLine(msg));
   }
 
   public refreshModels(): void {
@@ -198,86 +189,23 @@ export class GatewayProvider
     }
   }
 
-  public async getAllModels(
-    token: vscode.CancellationToken,
-    options: { silent?: boolean; profileId?: string } = {}
-  ): Promise<vscode.LanguageModelChatInformation[]> {
-    const enabledProfiles = this.profileStore.getEnabledProfiles();
-    const target = options.profileId
-      ? enabledProfiles.filter(
-          (p) => p.id === options.profileId || p.name.toLowerCase() === options.profileId?.toLowerCase()
-        )
-      : enabledProfiles;
-    return this.fetchModelsForProfiles(target, token, options.silent ?? true, false);
-  }
-
   async provideLanguageModelChatInformation(
-    options: { silent: boolean; group?: string; configuration?: { readonly [key: string]: unknown } },
+    options: { silent: boolean; configuration?: { readonly [key: string]: unknown } },
     token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatInformation[]> {
     this.applyFrameworkConfiguration(options.configuration);
-
-    if (options.configuration === undefined) {
-      // Default Vendor pass: VS Code calls this without group configuration.
-      // Return empty array so the default vendor header ("9Router") exposes no models
-      // and is never displayed in the model list.
-      this.groupResolutionIndex = 0;
-      void syncChatLanguageModelsGroups(this.profileStore.getProfiles(), (msg) =>
-        this.outputChannel.appendLine(msg)
-      );
-      return [];
-    }
 
     const enabledProfiles = this.profileStore.getEnabledProfiles();
     if (enabledProfiles.length === 0) {
       return [];
     }
 
-    const configProfileId =
-      typeof options.configuration.profileId === 'string' &&
-      options.configuration.profileId.trim().length > 0
-        ? options.configuration.profileId.trim()
-        : typeof options.configuration.name === 'string' &&
-          options.configuration.name.trim().length > 0
-        ? options.configuration.name.trim()
-        : undefined;
-
-    let targetProfiles: readonly Profile[];
-    if (configProfileId) {
-      const matched = enabledProfiles.filter(
-        (p) => p.id === configProfileId || p.name.toLowerCase() === configProfileId.toLowerCase()
-      );
-      targetProfiles = matched.length > 0 ? matched : [enabledProfiles[0]];
-    } else {
-      const groupNames = getChatLanguageModelsGroupsForVendor();
-      const currentGroupName = groupNames[this.groupResolutionIndex++];
-      if (currentGroupName) {
-        const matched = enabledProfiles.filter(
-          (p) =>
-            p.name.toLowerCase() === currentGroupName.toLowerCase() || p.id === currentGroupName
-        );
-        targetProfiles = matched.length > 0 ? matched : [enabledProfiles[0]];
-      } else {
-        targetProfiles = enabledProfiles.length > 0 ? [enabledProfiles[0]] : [];
-      }
-    }
-
-    return this.fetchModelsForProfiles(targetProfiles, token, options.silent, true);
-  }
-
-  private async fetchModelsForProfiles(
-    targetProfiles: readonly Profile[],
-    token: vscode.CancellationToken,
-    silent: boolean,
-    throwOnError: boolean
-  ): Promise<vscode.LanguageModelChatInformation[]> {
-    const enabledProfiles = this.profileStore.getEnabledProfiles();
     const namespaceEnabled = enabledProfiles.length > 1;
     const allModels: vscode.LanguageModelChatInformation[] = [];
     const errors: Array<{ profile: Profile; error: string }> = [];
 
     await Promise.all(
-      targetProfiles.map(async (profile) => {
+      enabledProfiles.map(async (profile) => {
         const runtime = this.runtimes.get(profile.id);
         if (!runtime) {
           return;
@@ -300,19 +228,13 @@ export class GatewayProvider
       })
     );
 
-    if (!silent && errors.length > 0) {
+    if (!options.silent && errors.length > 0) {
       for (const { profile, error } of errors) {
         promptOpenSettings(
           `9Router [${profile.name}]: Failed to fetch models. ${diagnoseModelFetchError(error)}`,
           (msg) => this.outputChannel.appendLine(msg)
         );
       }
-    }
-
-    if (throwOnError && errors.length > 0 && allModels.length === 0) {
-      const firstError = errors[0];
-      const errorMsg = diagnoseModelFetchError(firstError.error);
-      throw new Error(`[${firstError.profile.name}] ${errorMsg}`);
     }
 
     return allModels;
@@ -445,22 +367,6 @@ export class GatewayProvider
         profileConnState = 'ok';
       }
 
-      const profileConfig = runtime
-        ? runtime.getConfig()
-        : this.configService.loadForProfile(profile);
-
-      const profileModels: ModelSummary[] = [];
-      for (const m of cached) {
-        const totalContext = runtime?.catalog.getContextForModel(m.id);
-        profileModels.push({
-          id: m.id,
-          name: m.name,
-          contextLabel: formatContextLabel(totalContext),
-          ...(totalContext !== undefined ? { totalContext } : {}),
-          capabilityLabels: formatCapabilityLabels(m.capabilities ?? {}),
-        });
-      }
-
       profileSummaries.push({
         id: profile.id,
         name: profile.name,
@@ -469,15 +375,6 @@ export class GatewayProvider
         modelCount: cached.length,
         connectionState: profileConnState,
         errorMessage: lastError,
-        models: profileModels,
-        features: {
-          toolCalling: profileConfig.enableToolCalling,
-          imageInput: profileConfig.enableImageInput,
-          parallelToolCalling: profileConfig.parallelToolCalling,
-          inlineCompletion: profileConfig.enableInlineCompletion,
-          inlineCompletionModel: profileConfig.inlineCompletionModel,
-          agentTemperature: profileConfig.agentTemperature,
-        },
       });
 
       if (profile.enabled) {
