@@ -33,6 +33,7 @@ export function getChatLanguageModelsPath(): string {
 interface ChatLanguageModelsGroup {
   name: string;
   vendor: string;
+  profileId?: string;
   settings?: Record<string, unknown>;
   [key: string]: unknown;
 }
@@ -120,6 +121,7 @@ export async function syncChatLanguageModelsGroups(
       return {
         name: p.name,
         vendor: VENDOR_ID,
+        profileId: p.id,
         ...(match?.settings ? { settings: match.settings } : {}),
       };
     });

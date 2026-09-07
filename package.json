@@ -2,7 +2,7 @@
   "name": "9router-for-github-copilot",
   "displayName": "9Router for Github Copilot (OpenAI compatible)",
   "description": "Connect GitHub Copilot to 9Router and any OpenAI-compatible server for open-source models",
-  "version": "2.0.0",
+  "version": "2.0.0-rc.1",
   "publisher": "hotrungnhan",
   "icon": "assets/icon.png",
   "private": true,
@@ -29,7 +29,9 @@
     "test": "bun run test:build && bun run test:run",
     "test:coverage": "bun run test:build && bun run test:run -- --experimental-test-coverage",
     "package": "vsce package --no-yarn",
+    "package:pre-release": "vsce package --no-yarn --pre-release",
     "deploy": "vsce publish --no-yarn",
+    "deploy:pre-release": "vsce publish --no-yarn --pre-release",
     "install:local": "code --install-extension ./9router-for-github-copilot-*.vsix --force"
   },
   "categories": [

@@ -47,10 +47,7 @@ export function registerCommands(
         const cts = new vscode.CancellationTokenSource();
         try {
           if (selection === 'ALL') {
-            const models = await provider.provideLanguageModelChatInformation(
-              { silent: false },
-              cts.token
-            );
+            const models = await provider.getAllModels(cts.token, { silent: false });
             if (models.length > 0) {
               statusManager.setIdle(models.map((m) => m.id));
               vscode.window.showInformationMessage(
@@ -63,10 +60,10 @@ export function registerCommands(
           } else {
             // Test single profile
             provider.invalidateModelCache(selection.id);
-            const models = await provider.provideLanguageModelChatInformation(
-              { silent: false },
-              cts.token
-            );
+            const models = await provider.getAllModels(cts.token, {
+              silent: false,
+              profileId: selection.id,
+            });
             const profileModels = models.filter((m) => m.detail === selection.name);
             if (profileModels.length > 0) {
               vscode.window.showInformationMessage(
@@ -134,10 +131,7 @@ export function registerCommands(
         const cts = new vscode.CancellationTokenSource();
         let models: vscode.LanguageModelChatInformation[];
         try {
-          models = await provider.provideLanguageModelChatInformation(
-            { silent: false },
-            cts.token
-          );
+          models = await provider.getAllModels(cts.token, { silent: false });
         } finally {
           cts.dispose();
         }

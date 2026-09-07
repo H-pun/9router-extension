@@ -64,13 +64,29 @@ export async function manageProvidersFlow(
       } else if (summary && summary.modelCount > 0) {
         stateIcon = '$(check)';
         statusInfo = ` · ${summary.modelCount} model(s)`;
+      } else if (summary?.connectionState === 'noModels') {
+        stateIcon = '$(warning)';
+        statusInfo = ' · 0 models';
       }
+
+      const feats = summary?.features;
+      const featBadges: string[] = [];
+      if (feats?.toolCalling) {
+        featBadges.push('tools');
+      }
+      if (feats?.imageInput) {
+        featBadges.push('vision');
+      }
+      if (feats?.inlineCompletion) {
+        featBadges.push('inline');
+      }
+      const featInfo = featBadges.length > 0 ? ` · [${featBadges.join(', ')}]` : '';
 
       const headerCount = Object.keys(p.customHeaders ?? {}).length;
       const headersInfo = headerCount > 0 ? ` · ${headerCount} header(s)` : '';
       items.push({
         label: `${stateIcon} ${p.name}`,
-        description: `${p.serverUrl}${statusInfo}${headersInfo}`,
+        description: `${p.serverUrl}${statusInfo}${featInfo}${headersInfo}`,
         action: 'select',
         profile: p,
       });
@@ -104,7 +120,7 @@ export async function manageProvidersFlow(
     } else if (pick.action === 'refresh') {
       provider.refreshModels();
       await refreshStatusBar();
-      vscode.window.showInformationMessage('9Router: Refreshed all provider model catalogs.');
+      vscode.window.setStatusBarMessage('9Router: Refreshed all provider model catalogs.', 3000);
     } else if (pick.action === 'openSettings') {
       await vscode.commands.executeCommand(
         'workbench.action.openSettings',
@@ -300,7 +316,7 @@ async function editProviderFlow(
     provider.invalidateModelCache(current.id);
     provider.refreshModels();
     await refreshStatusBar();
-    vscode.window.showInformationMessage(`9Router [${current.name}]: Cache cleared and models refreshed.`);
+    vscode.window.setStatusBarMessage(`9Router [${current.name}]: Models refreshed.`, 3000);
   } else if (pick.action === 'name') {
     const nextName = await vscode.window.showInputBox({
       title: '9Router — Rename Provider',

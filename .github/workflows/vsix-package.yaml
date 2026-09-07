@@ -7,8 +7,9 @@ on:
     branches:
       - main
     tags:
-      # Publishes for tags such as 1.2.0.
+      # Publishes for release tags (e.g. 1.2.0) and pre-release tags (e.g. 1.0.0-rc, 2.0.0-rc.1, 2.0.0-beta)
       - "[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-*"
 
   pull_request:
     branches:
@@ -110,6 +111,14 @@ jobs:
         run: bun run build
 
       - name: Publish extension
-        run: bun run deploy
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            echo "Publishing pre-release package ($GITHUB_REF_NAME) to VS Code Marketplace..."
+            bun run deploy:pre-release
+          else
+            echo "Publishing release package ($GITHUB_REF_NAME) to VS Code Marketplace..."
+            bun run deploy
+          fi
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
