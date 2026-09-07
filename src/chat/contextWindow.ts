@@ -14,6 +14,7 @@
  */
 
 import { OpenAIModel } from '../api/types';
+import { matchesWildcard } from '../config/perModelOptions';
 
 /** A context value is only usable if it's a positive finite number. */
 function isUsableContext(value: unknown): value is number {
@@ -66,19 +67,6 @@ export function resolveContextWindowOverride(
     }
   }
   return wildcardMatch;
-}
-
-/**
- * Build a case-insensitive `RegExp` that matches `modelId` against a pattern
- * containing `*` wildcards. All other characters are matched literally.
- * (Same semantics as perModelOptions key matching.)
- */
-function matchesWildcard(pattern: string, modelId: string): boolean {
-  const escaped = pattern
-    .split('*')
-    .map((segment) => segment.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`))
-    .join('.*');
-  return new RegExp(`^${escaped}$`, 'i').test(modelId);
 }
 
 /**

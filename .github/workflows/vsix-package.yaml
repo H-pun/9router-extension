@@ -8,8 +8,8 @@ on:
       - main
     tags:
       # Publishes for release tags (e.g. 1.2.0) and pre-release tags (e.g. 1.0.0-rc, 2.0.0-rc.1, 2.0.0-beta)
-      - "[0-9]+.[0-9]+.[0-9]+"
-      - "[0-9]+.[0-9]+.[0-9]+-*"
+      - "[0-9]*.[0-9]*.[0-9]*"
+      - "[0-9]*.[0-9]*.[0-9]*-*"
 
   pull_request:
     branches:
@@ -61,6 +61,12 @@ jobs:
         # Ignoring lifecycle scripts reduces install-time supply-chain risk.
         run: bun install --frozen-lockfile --ignore-scripts
 
+      - name: Lint
+        run: bun run lint
+
+      - name: Run tests
+        run: bun run test
+
       - name: Build extension
         run: bun run build
 
@@ -106,6 +112,12 @@ jobs:
             echo "::error::Tag '$GITHUB_REF_NAME' does not match package.json version '$PACKAGE_VERSION'."
             exit 1
           fi
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Run tests
+        run: bun run test
 
       - name: Build extension
         run: bun run build

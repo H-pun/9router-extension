@@ -37,9 +37,7 @@ export function validateGatewayConfig(raw: GatewayConfig): {
     cfg.requestTimeout = MAX_REQUEST_TIMEOUT_MS;
   }
 
-  try {
-    new URL(cfg.serverUrl);
-  } catch {
+  if (!URL.canParse(cfg.serverUrl)) {
     issues.push({ kind: 'invalidServerUrl', url: cfg.serverUrl });
     cfg.serverUrl = FALLBACK_SERVER_URL;
   }

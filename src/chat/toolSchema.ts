@@ -7,7 +7,7 @@
  *    tool invocation doesn't crash on missing fields
  */
 
-export type SchemaLogger = (message: string) => void;
+type SchemaLogger = (message: string) => void;
 
 const NOOP_LOGGER: SchemaLogger = () => {
   /* no-op */

@@ -22,7 +22,10 @@ export interface InlineCompletionBackend {
  */
 function delay(ms: number, token: vscode.CancellationToken): Promise<void> {
   return new Promise((resolve) => {
-    const timer = setTimeout(resolve, ms);
+    const timer = setTimeout(() => {
+      sub.dispose();
+      resolve();
+    }, ms);
     const sub = token.onCancellationRequested(() => {
       clearTimeout(timer);
       sub.dispose();

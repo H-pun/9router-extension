@@ -17,7 +17,7 @@ export const TOKEN_CONSTANTS = {
   CHARS_PER_TOKEN: 4,
 } as const;
 
-export type TokenLogger = (message: string) => void;
+type TokenLogger = (message: string) => void;
 
 const NOOP_LOGGER: TokenLogger = () => {
   /* no-op */

@@ -159,16 +159,3 @@ async function clearLegacySetting(
     await config.update(section, undefined, ConfigurationTarget.Global);
   }
 }
-
-/**
- * Compose the user-facing toast for a successful migration. Returns
- * `undefined` when nothing was migrated, so callers can suppress the
- * notification entirely in that case.
- */
-export function formatMigrationToast(result: MigrationResult): string | undefined {
-  const moved: string[] = [];
-  if (result.apiKeyMigrated) { moved.push('API key'); }
-  if (result.customHeadersMigrated) { moved.push('custom headers'); }
-  if (moved.length === 0) { return undefined; }
-  return `9Router: ${moved.join(' and ')} moved into VS Code's secret storage. Use "Manage Providers" to update them.`;
-}

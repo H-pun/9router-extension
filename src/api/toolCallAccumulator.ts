@@ -12,8 +12,6 @@
  * directly.
  */
 
-import { randomBytes } from 'node:crypto';
-
 export interface AccumulatedToolCall {
   id: string;
   name: string;
@@ -38,7 +36,7 @@ export class ToolCallAccumulator {
   private readonly requestId: string;
 
   constructor(requestId?: string) {
-    this.requestId = requestId ?? `req_${Date.now()}_${randomBytes(4).toString('hex')}`;
+    this.requestId = requestId ?? `req_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
   }
 
   /**

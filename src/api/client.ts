@@ -105,10 +105,6 @@ interface ParsedChunk {
   id?: string;
 }
 
-interface ServerErrorPayload {
-  error: { message?: string } | string;
-}
-
 export type GatewayLogger = (message: string) => void;
 
 /**
@@ -415,7 +411,7 @@ export class GatewayClient {
     // Inline error payload: `{ "error": { "message": "..." } }`. Distinguished
     // from a normal chunk (which has `choices`).
     if ('error' in obj && !('choices' in obj)) {
-      const message = extractServerErrorMessage(obj as unknown as ServerErrorPayload);
+      const message = extractServerErrorMessage(obj);
       throw new Error(`${ERROR_PREFIX}${message}`);
     }
 
@@ -693,11 +689,11 @@ function toNonNegativeNumber(value: unknown, fallback = 0): number {
   return value < 0 ? 0 : value;
 }
 
-function extractServerErrorMessage(payload: ServerErrorPayload): string {
+function extractServerErrorMessage(payload: { error?: unknown }): string {
   const err = payload.error;
   if (typeof err === 'string') { return err; }
-  if (err && typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
-    return err.message;
+  if (err && typeof err === 'object' && 'message' in err && typeof (err as { message?: unknown }).message === 'string') {
+    return (err as { message: string }).message;
   }
   return JSON.stringify(err);
 }
