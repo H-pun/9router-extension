@@ -59,7 +59,7 @@ Inference stays on your server. No per-token fees. Doesn't consume Copilot premi
 
 ```jsonc
 "extensions.supportAgentsWindow": {
-  "hotrungnhan.9router-for-github-copilot": true
+  "H-pun.9router-for-github-copilot": true
 }
 ```
 
